@@ -1,0 +1,67 @@
+{% extends '../home.html' %}
+{% load static %}
+
+{% block main %}
+<div class="w-full p-3 md:px-4 md:py-5 lg:px-6 lg:py-6 overflow-y-auto">
+    <div class="flex items-center mb-6">
+        <a href="{% url 'theme:login_details' %}" class="mr-4 text-gray-500 hover:text-gray-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+        </a>
+        <h1 class="text-2xl font-bold">Verify {{ action_type }}</h1>
+    </div>
+    
+    <!-- Success/Error Messages -->
+    {% if messages %}
+    <div class="mb-6">
+        {% for message in messages %}
+            <div class="p-4 mb-4 rounded-md {% if message.tags == 'success' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="bg-white rounded-lg shadow p-6 max-w-md mx-auto">
+        <div class="text-center mb-6">
+            <svg class="mx-auto h-12 w-12 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+            </svg>
+        </div>
+        
+        <p class="text-center text-gray-700 mb-6">
+            We've sent a verification code to 
+            <strong>{% if action_type == 'Email Change' %}{{ new_email }}{% else %}{{ user.email }}{% endif %}</strong>. 
+            Please enter the code below to verify your {{ action_type|lower }}.
+        </p>
+        
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="space-y-2">
+                <label for="otp" class="block text-sm text-gray-700 text-center">Verification Code</label>
+                <input type="text" name="otp" id="otp" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400 text-center text-xl tracking-wider" 
+                    maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" required>
+            </div>
+            
+            <div>
+                <button type="submit" class="w-full px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500 transition-colors">
+                    Verify
+                </button>
+            </div>
+        </form>
+        
+        <div class="text-center mt-6">
+            <p class="text-sm text-gray-500">
+                Didn't receive the code? 
+                <a href="{% url 'theme:resend_login_otp' %}" class="text-orange-400 hover:underline">Resend code</a>
+            </p>
+            
+            <p class="text-sm text-gray-500 mt-3">
+                The verification code will expire in 5 minutes.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

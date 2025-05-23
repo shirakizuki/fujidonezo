@@ -16,6 +16,7 @@ from datetime import timedelta
 from django.db.models import Q
 from django.http import JsonResponse
 import json
+import random
 
 @login_required(login_url='/login/')
 def app(request):
@@ -614,3 +615,358 @@ def delete_label(request, label_id):
     
     # Redirect back to the labels page
     return redirect('theme:labels')
+
+@login_required(login_url='/login/')
+def login_details(request):
+    """Display the login details page"""
+    return render(request, 'home/settings/login_details.html', {'user': request.user})
+
+@login_required(login_url='/login/')
+def change_email(request):
+    """Handle email change requests with verification"""
+    if request.method == 'POST':
+        new_email = request.POST.get('new_email', '').strip().lower()
+        current_password = request.POST.get('current_password', '')
+        
+        # Validate inputs
+        if not new_email or not current_password:
+            messages.error(request, "Please fill in all fields.")
+            return redirect('theme:login_details')
+            
+        # Verify current password
+        user = authenticate(request, username=request.user.username, password=current_password)
+        if not user:
+            messages.error(request, "Current password is incorrect.")
+            return redirect('theme:login_details')
+            
+        # Check if email is already in use
+        if User.objects.filter(email=new_email).exclude(pk=request.user.pk).exists():
+            messages.error(request, "This email address is already in use.")
+            return redirect('theme:login_details')
+            
+        # If email is unchanged, redirect back
+        if new_email == request.user.email:
+            messages.warning(request, "The new email is the same as your current email.")
+            return redirect('theme:login_details')
+            
+        # Send OTP for verification
+        send_otp_email(request, request.user, 'email_change', new_email)
+        
+        # Store action details in session
+        request.session['pending_action'] = {
+            'type': 'email_change',
+            'new_email': new_email
+        }
+        
+        messages.success(request, "A verification code has been sent to your new email address. Please verify to complete the change.")
+        return redirect('theme:verify_login_otp')
+        
+    # If not POST, redirect to login details page
+    return redirect('theme:login_details')
+
+def send_email_change_verification(request, user, new_email):
+    """Send verification email for email change"""
+    # Create or get token
+    token, created = EmailVerificationToken.objects.get_or_create(
+        user=user,
+        defaults={
+            'expires_at': timezone.now() + timedelta(minutes=5),
+            'is_used': False
+        }
+    )
+    
+    # If token exists but is expired or used, reset
+    if not created and (not token.is_valid or token.is_used):
+        token.reset_token()
+    else:
+        # Update last_sent time
+        token.last_sent = timezone.now()
+        token.save()
+    
+    # Generate verification URL with additional parameter for email change
+    verification_url = f"{settings.SITE_URL}{reverse('theme:verify_email_change', kwargs={'token': token.token})}"
+    
+    # Prepare email context
+    context = {
+        'user': user,
+        'verification_url': verification_url,
+        'expiry_time': token.expires_at.strftime('%Y-%m-%d %H:%M:%S UTC'),
+        'new_email': new_email
+    }
+    
+    # Render the HTML email
+    html_message = render_to_string('emails/email_change_verification.html', context)
+    plain_message = strip_tags(html_message)
+    
+    # Send email
+    send_mail(
+        subject='Verify Your New Email Address - Donezo',
+        message=plain_message,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[new_email],
+        html_message=html_message,
+        fail_silently=False
+    )
+    
+    return token
+
+@login_required(login_url='/login/')
+def verify_email_change(request, token):
+    """Handle email change verification"""
+    try:
+        # Find the token
+        verification_token = get_object_or_404(EmailVerificationToken, token=token)
+        
+        # Check if token is still valid and belongs to logged in user
+        if verification_token.is_valid and verification_token.user == request.user:
+            # Get new email from session
+            new_email = request.session.get('new_email')
+            
+            if not new_email:
+                messages.error(request, "Email change session expired. Please try again.")
+                return redirect('theme:login_details')
+                
+            # Update user email
+            user = request.user
+            user.email = new_email
+            user.username = new_email  # Since username is used as email in this project
+            user.save()
+            
+            # Mark token as used
+            verification_token.mark_used()
+            
+            # Clear session data
+            if 'new_email' in request.session:
+                del request.session['new_email']
+                
+            messages.success(request, "Your email has been successfully updated.")
+            return redirect('theme:account')
+        else:
+            error_message = "Verification link has expired. Please request the email change again."
+            messages.error(request, error_message)
+            return redirect('theme:login_details')
+            
+    except Exception as e:
+        error_message = "Invalid verification link. Please request the email change again."
+        messages.error(request, error_message)
+        return redirect('theme:login_details')
+
+@login_required(login_url='/login/')
+def change_password(request):
+    """Handle password change requests"""
+    if request.method == 'POST':
+        current_password = request.POST.get('current_password', '')
+        new_password = request.POST.get('new_password', '')
+        confirm_password = request.POST.get('confirm_password', '')
+        
+        # Validate inputs
+        if not current_password or not new_password or not confirm_password:
+            messages.error(request, "Please fill in all fields.")
+            return redirect('theme:login_details')
+            
+        # Verify current password
+        user = authenticate(request, username=request.user.username, password=current_password)
+        if not user:
+            messages.error(request, "Current password is incorrect.")
+            return redirect('theme:login_details')
+            
+        # Check if passwords match
+        if new_password != confirm_password:
+            messages.error(request, "New passwords don't match.")
+            return redirect('theme:login_details')
+            
+        # Check password strength (optional - you could implement more checks)
+        if len(new_password) < 8:
+            messages.error(request, "Password must be at least 8 characters long.")
+            return redirect('theme:login_details')
+            
+        # Send OTP for verification
+        send_otp_email(request, request.user, 'password_change')
+        
+        # Store password data securely in session
+        request.session['pending_action'] = {
+            'type': 'password_change',
+            'new_password': new_password
+        }
+        
+        messages.success(request, "A verification code has been sent to your email. Please verify to complete the password change.")
+        return redirect('theme:verify_login_otp')
+        
+    # If not POST, redirect to login details page
+    return redirect('theme:login_details')  
+
+def generate_otp():
+    """Generate a 6-digit OTP"""
+    return str(random.randint(100000, 999999))
+
+def send_otp_email(request, user, action_type, new_email=None):
+    """Send OTP email for verification of login detail changes
+    
+    Args:
+        request: HTTP request object
+        user: User object
+        action_type: String indicating type of action ('email_change' or 'password_change')
+        new_email: New email if action_type is 'email_change'
+    """
+    # Generate OTP
+    otp = generate_otp()
+    
+    # Store OTP in session with expiry time (5 minutes from now)
+    expiry_time = timezone.now() + timedelta(minutes=5)
+    request.session['login_details_otp'] = {
+        'otp': otp,
+        'action_type': action_type,
+        'expires_at': expiry_time.timestamp(),
+        'new_email': new_email,  # Only used for email change
+        'attempts': 0  # Track verification attempts
+    }
+    
+    # Determine recipient email
+    recipient = new_email if action_type == 'email_change' and new_email else user.email
+    
+    # Prepare email context
+    context = {
+        'user': user,
+        'otp': otp,
+        'expiry_time': expiry_time.strftime('%Y-%m-%d %H:%M:%S UTC'),
+        'action_type': 'email change' if action_type == 'email_change' else 'password change',
+        'new_email': new_email
+    }
+    
+    # Render the HTML email
+    html_message = render_to_string('emails/login_details_otp_email.html', context)
+    plain_message = strip_tags(html_message)
+    
+    # Send email
+    subject = 'Verification Code for Your Account Changes - Donezo'
+    send_mail(
+        subject=subject,
+        message=plain_message,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[recipient],
+        html_message=html_message,
+        fail_silently=False
+    )
+    
+    return otp
+
+@login_required(login_url='/login/')
+def verify_login_otp(request):
+    """Handle OTP verification for login detail changes"""
+    # Check if there's a pending action
+    pending_action = request.session.get('pending_action')
+    otp_data = request.session.get('login_details_otp')
+    
+    if not pending_action or not otp_data:
+        messages.error(request, "No pending changes to verify. Please try again.")
+        return redirect('theme:login_details')
+    
+    # Check if OTP has expired
+    current_time = timezone.now().timestamp()
+    if current_time > otp_data.get('expires_at', 0):
+        messages.error(request, "Verification code has expired. Please request a new code.")
+        return redirect('theme:login_details')
+    
+    # Process OTP verification
+    if request.method == 'POST':
+        submitted_otp = request.POST.get('otp', '')
+        
+        # Track verification attempts to prevent brute force
+        otp_data['attempts'] = otp_data.get('attempts', 0) + 1
+        request.session['login_details_otp'] = otp_data
+        
+        # Limit to 3 attempts
+        if otp_data['attempts'] >= 3:
+            del request.session['login_details_otp']
+            del request.session['pending_action']
+            messages.error(request, "Too many incorrect attempts. Please try again.")
+            return redirect('theme:login_details')
+        
+        # Verify OTP
+        if submitted_otp == otp_data['otp']:
+            # OTP is correct, process the pending action
+            action_type = pending_action['type']
+            
+            if action_type == 'email_change':
+                new_email = pending_action['new_email']
+                
+                # Update user email
+                user = request.user
+                user.email = new_email
+                user.username = new_email  # Since username is used as email in this project
+                user.save()
+                
+                # Clean up session
+                del request.session['login_details_otp']
+                del request.session['pending_action']
+                
+                messages.success(request, "Your email has been successfully updated.")
+                return redirect('theme:account')
+                
+            elif action_type == 'password_change':
+                new_password = pending_action['new_password']
+                
+                # Update password
+                user = request.user
+                user.set_password(new_password)
+                user.save()
+                
+                # Clean up session
+                del request.session['login_details_otp']
+                del request.session['pending_action']
+                
+                # Re-authenticate the user to prevent logout
+                user = authenticate(request, username=user.username, password=new_password)
+                auth_login(request, user)
+                
+                messages.success(request, "Your password has been successfully updated.")
+                return redirect('theme:account')
+            
+        else:
+            messages.error(request, f"Invalid verification code. You have {3 - otp_data['attempts']} attempts remaining.")
+    # Prepare context for the template
+    context = {
+        'user': request.user,
+        'action_type': 'Email Change' if pending_action['type'] == 'email_change' else 'Password Change',
+    }
+    
+    if pending_action['type'] == 'email_change':
+        context['new_email'] = pending_action['new_email']
+    
+    # Add OTP to context if in debug mode
+    if settings.DEBUG:
+        context['debug_otp'] = otp_data['otp']
+        context['debug_mode'] = True
+        
+    return render(request, 'home/settings/verify_login_otp.html', context)
+
+@login_required(login_url='/login/')
+def resend_login_otp(request):
+    """Resend OTP for login detail verification"""
+    # Check if there's a pending action
+    pending_action = request.session.get('pending_action')
+    
+    if not pending_action:
+        messages.error(request, "No pending changes to verify. Please try again.")
+        return redirect('theme:login_details')
+    
+    # Check if we can resend (prevent spam)
+    otp_data = request.session.get('login_details_otp', {})
+    current_time = timezone.now().timestamp()
+    last_sent = otp_data.get('expires_at', 0) - 300  # Default 5 min earlier
+    
+    if current_time < last_sent + 60:  # 60 seconds cooldown
+        wait_time = int(last_sent + 60 - current_time)
+        messages.warning(request, f"Please wait {wait_time} seconds before requesting a new verification code.")
+        return redirect('theme:verify_login_otp')
+    
+    # Resend OTP
+    action_type = pending_action['type']
+    if action_type == 'email_change':
+        new_email = pending_action['new_email']
+        send_otp_email(request, request.user, 'email_change', new_email)
+    else:
+        send_otp_email(request, request.user, 'password_change')
+    
+    messages.success(request, "A new verification code has been sent to your email.")
+    return redirect('theme:verify_login_otp')
