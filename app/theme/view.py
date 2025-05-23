@@ -391,6 +391,26 @@ def calendar(request):
 @login_required(login_url='/login/')
 def help(request):
     return render(request, 'home/help.html', {'user': request.user})
+
+@login_required(login_url='/login/')
+def account(request):
+    """Handle user account settings"""
+    if request.method == 'POST':
+        # Handle personal information update
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
+        has_changes = request.POST.get('has_changes') == 'true'
+        
+        # Update user information if there are changes
+        if has_changes and (first_name != request.user.first_name or last_name != request.user.last_name):
+            user = request.user
+            user.first_name = first_name
+            user.last_name = last_name
+            user.save()
+            # Redirect with a success parameter to show the popup
+            return redirect(f'{reverse("theme:account")}?success=true')
+        
+    return render(request, 'home/settings/account.html', {'user': request.user})
     
 def terms_of_service(request):
     """Display the Terms of Service page"""

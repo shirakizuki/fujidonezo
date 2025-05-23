@@ -28,7 +28,7 @@
                     </svg>
                 </button>
             </div>
-            <a href="#" class="flex items-center gap-2 font-sans">
+            <a href="{% url 'theme:account' %}" class="flex items-center gap-2 font-sans">
                 <img src="{{ user.profile.avatar }}" alt="Logo" class="w-12 rounded">
                 <span class="text-sm md:text-xl ">{{ user.first_name }}</span>
             </a>

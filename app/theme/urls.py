@@ -26,5 +26,6 @@ urlpatterns = [
     path('app/labels/delete/<int:label_id>/', view.delete_label, name='delete_label'),
     path('app/calendar', view.calendar, name='calendar'),
     path('app/help', view.help, name='help'),
+    path('app/account', view.account, name='account'),
 ]
 
