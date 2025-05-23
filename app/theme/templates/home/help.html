@@ -2,7 +2,230 @@
 {% load static %}
 {% load tailwind_tags %}
 {% block main %}
-<div>
-    <h1>HELP</h1>
+<div class="w-full max-w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 overflow-y-auto">
+    <div class="bg-white rounded-lg overflow-hidden">
+        <!-- Header with brand colors -->
+        <div class="bg-orange-400 px-4 sm:px-6 py-4">
+            <h1 class="text-2xl sm:text-3xl font-bold text-white">Help & FAQ</h1>
+            <p class="text-orange-100">Last Updated: May 24, 2025</p>
+        </div>
+        
+        <div class="p-4 sm:p-6 space-y-8">
+            <!-- General Questions Section -->
+            <section>
+                <h2 class="text-xl sm:text-2xl font-semibold text-orange-500 mb-4">General Questions</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">What is Donezo?</h3>
+                        <p class="text-gray-700">Donezo is a modern task management web application built with Django and styled with Tailwind CSS. It helps users organize and manage their tasks with a clean, intuitive interface.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">What features does Donezo offer?</h3>
+                        <ul class="list-disc pl-5 text-gray-700 space-y-1">
+                            <li>User authentication with email verification</li>
+                            <li>Task creation, editing, and deletion</li>
+                            <li>Task organization by due date (Today, Upcoming, Overdue)</li>
+                            <li>Task labeling and filtering</li>
+                            <li>Task completion tracking</li>
+                            <li>Responsive design that works on all devices</li>
+                            <li>Password strength validation</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">Is Donezo free to use?</h3>
+                        <p class="text-gray-700">Based on the codebase, Donezo appears to be freely available. There's no visible payment or subscription model implemented.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Account Management Section -->
+            <section>
+                <h2 class="text-xl sm:text-2xl font-semibold text-orange-500 mb-4">Account Management</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">How do I create an account?</h3>
+                        <p class="text-gray-700">You can register for an account by clicking the "REGISTER HERE" link on the login page, filling out the registration form with your name, email address, and password.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">How secure is my password?</h3>
+                        <p class="text-gray-700">Donezo implements password strength validation to ensure you create a secure password. The application also uses proper security practices to store your credentials securely.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">How do I change my email address?</h3>
+                        <ol class="list-decimal pl-5 text-gray-700 space-y-1">
+                            <li>Log in to your account</li>
+                            <li>Go to the settings section</li>
+                            <li>Select the "Change Email" tab</li>
+                            <li>Enter your new email address</li>
+                            <li>You'll receive a verification email to confirm the change</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">How do I change my password?</h3>
+                        <ol class="list-decimal pl-5 text-gray-700 space-y-1">
+                            <li>Log in to your account</li>
+                            <li>Go to the settings section</li>
+                            <li>Select the "Change Password" tab</li>
+                            <li>Enter your current password and your new password</li>
+                            <li>Confirm your new password and submit the form</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">What happens if I forget my password?</h3>
+                        <p class="text-gray-700">The application has a password recovery option. You can request a password reset link sent to your email address.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Task Management Section -->
+            <section>
+                <h2 class="text-xl sm:text-2xl font-semibold text-orange-500 mb-4">Task Management</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">How do I create a new task?</h3>
+                        <p class="text-gray-700">You can create a new task by clicking the task creation button and filling out the task form with details like title, description, due date, and labels.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">How are tasks organized?</h3>
+                        <p class="text-gray-700">Tasks are organized into different sections:</p>
+                        <ul class="list-disc pl-5 text-gray-700 space-y-1 mt-2">
+                            <li>Overdue tasks (past due date)</li>
+                            <li>Today's tasks (due today)</li>
+                            <li>Upcoming tasks (future due date) and tasks with no due date</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">How do I mark a task as complete?</h3>
+                        <p class="text-gray-700">You can mark a task as complete by checking the checkbox next to the task. The system will update the task's status accordingly.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">Can I edit a task after creating it?</h3>
+                        <p class="text-gray-700">Yes, each task has an edit button that allows you to modify all task details after creation.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Privacy and Security Section -->
+            <section>
+                <h2 class="text-xl sm:text-2xl font-semibold text-orange-500 mb-4">Privacy and Security</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">What information does Donezo collect?</h3>
+                        <p class="text-gray-700">As detailed in the Privacy Policy, Donezo collects:</p>
+                        <ul class="list-disc pl-5 text-gray-700 space-y-1 mt-2">
+                            <li>Account information (name, email, password)</li>
+                            <li>Usage data (tasks created, completed, and other app interactions)</li>
+                            <li>Device information (device type, operating system, browser)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">How is my data protected?</h3>
+                        <p class="text-gray-700">Donezo implements appropriate security measures to protect against unauthorized access, alteration, or destruction of data. However, no method of Internet transmission is 100% secure.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">Who can see my tasks and personal information?</h3>
+                        <p class="text-gray-700">Your tasks and personal information are private and not shared with third parties except in limited circumstances as outlined in the Privacy Policy.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">What are my rights regarding my data?</h3>
+                        <p class="text-gray-700">According to the Privacy Policy, you have the right to:</p>
+                        <ul class="list-disc pl-5 text-gray-700 space-y-1 mt-2">
+                            <li>Access your personal information</li>
+                            <li>Request correction of inaccurate information</li>
+                            <li>Request deletion of your information</li>
+                            <li>Object to processing of your information</li>
+                            <li>Request restriction of processing</li>
+                            <li>Request data portability</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Legal Information Section -->
+            <section>
+                <h2 class="text-xl sm:text-2xl font-semibold text-orange-500 mb-4">Legal Information</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">What are Donezo's Terms of Service?</h3>
+                        <p class="text-gray-700">The complete Terms of Service outline your rights and obligations when using Donezo, including account requirements, prohibited conduct, and intellectual property rights. <a href="{% url 'theme:terms-of-service' %}" class="text-orange-500 hover:underline">View full Terms of Service</a>.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">How can I contact Donezo support?</h3>
+                        <p class="text-gray-700">For questions about the Terms of Service, you can contact <a href="mailto:support@donezo.com" class="text-orange-500 hover:underline">support@donezo.com</a>.</p>
+                        <p class="text-gray-700 mt-2">For privacy-related inquiries, you can contact <a href="mailto:privacy@donezo.com" class="text-orange-500 hover:underline">privacy@donezo.com</a>.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">What is Donezo's license?</h3>
+                        <p class="text-gray-700">Donezo is available under the MIT License, which allows for free use, modification, and distribution of the software with proper attribution.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Technical Information Section -->
+            <section>
+                <h2 class="text-xl sm:text-2xl font-semibold text-orange-500 mb-4">Technical Information</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">What technologies does Donezo use?</h3>
+                        <ul class="list-disc pl-5 text-gray-700 space-y-1">
+                            <li>Backend: Python 3.13.2, Django 5.2.1, SQLite database</li>
+                            <li>Frontend: Tailwind CSS 3.x, JavaScript</li>
+                            <li>Development tools: Django Browser Reload, PostCSS</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                        <h3 class="font-medium text-lg text-gray-900 mb-2">Can I run Donezo locally?</h3>
+                        <p class="text-gray-700">Yes, you can run Donezo locally by following the installation steps in the README:</p>
+                        <ol class="list-decimal pl-5 text-gray-700 space-y-1 mt-2">
+                            <li>Clone the repository</li>
+                            <li>Create and activate a virtual environment</li>
+                            <li>Install Python dependencies</li>
+                            <li>Install Node.js dependencies for Tailwind CSS</li>
+                            <li>Run migrations</li>
+                            <li>Start the Tailwind CSS watcher</li>
+                            <li>Start the development server</li>
+                            <li>Access the application at http://127.0.0.1:8000/</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Footer -->
+        <div class="bg-gray-100 px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+            <a href="{% url 'theme:tasks' %}" class="text-orange-400 hover:text-orange-500 font-medium">
+                &larr; Back to Dashboard
+            </a>
+            <div class="flex space-x-4">
+                <a href="{% url 'theme:privacy-policy' %}" class="text-orange-400 hover:text-orange-500 font-medium">
+                    Privacy Policy
+                </a>
+                <a href="{% url 'theme:terms-of-service' %}" class="text-orange-400 hover:text-orange-500 font-medium">
+                    Terms of Service
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

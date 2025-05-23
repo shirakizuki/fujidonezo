@@ -4,7 +4,7 @@ A modern task management web application built with Django 5.2.1 and styled with
 
 ## Project Overview
 
-Donezo is a user-friendly web application designed to help users manage their tasks and stay organized. Built with Django and featuring a clean, modern UI powered by Tailwind CSS, this application provides a seamless user experience with secure authentication and responsive design.
+Donezo is a user-friendly web application designed to help users manage their tasks and stay organized. Built with Django and featuring a clean, modern UI powered by Tailwind CSS, this application provides a seamless user experience with secure authentication and responsive design. With its intuitive interface and powerful features, Donezo helps you keep track of your tasks and boost your productivity.
 
 ## Features
 
@@ -16,10 +16,17 @@ Donezo is a user-friendly web application designed to help users manage their ta
 
 - **Task Management**:
   - Create, read, update, and delete tasks
-  - Organize tasks by due date (Today, Upcoming)
+  - Organize tasks by due date (Today, Upcoming, Overdue)
   - Mark tasks as completed
   - Archive and restore tasks
   - Task labels for better organization
+  - Task filtering by status, date, and labels
+
+- **User-Friendly Features**:
+  - Comprehensive FAQ section
+  - Privacy Policy and Terms of Service pages
+  - Responsive help documentation
+  - Mobile-first approach throughout the application
 
 - **Modern UI**:
   - Clean and intuitive interface
@@ -143,14 +150,39 @@ donezo/
             └── templates/  # HTML templates
                ├── base.html  # Base template
                ├── auth/      # Authentication templates
+               │   ├── login.html
+               │   ├── register.html
+               │   ├── privacy-policy.html  # Privacy Policy page
+               │   ├── tos.html             # Terms of Service page
+               │   └── ...                  # Other auth templates
                ├── emails/    # Email templates
                └── home/      # Home page templates
+                  ├── home.html
+                  ├── help.html   # FAQ and Help page
+                  ├── listAll.html
+                  ├── labels.html
+                  ├── calendar.html
+                  └── settings/   # User settings templates
 ```
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+## Support and Documentation
+
+For help and guidance on using Donezo, please refer to the in-app Help & FAQ section, which provides comprehensive information about all features and functionalities.
+
+## Legal Information
+
+Donezo includes the following legal documents:
+- **Privacy Policy**: Details how user data is collected, used, and protected
+- **Terms of Service**: Outlines the rules and guidelines for using the application
+
 ## License
 
-This project is licensed under the terms of the license included in the repository.
+This project is licensed under the terms of the MIT license included in the repository.
+
+---
+
+**Last Updated**: May 24, 2025
