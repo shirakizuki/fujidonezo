@@ -2,12 +2,13 @@
 {% load static %}
 {% load tailwind_tags %}
 {% block main %}
-<div class="w-full p-3 md:px-4 md:py-5 lg:px-6 lg:py-6 overflow-y-auto">
-    <div class="mb-6">
-        <h1 class="text-2xl font-bold">Account Settings</h1>
-        <p class="text-gray-600">Manage your account details and preferences</p>
+<div class="w-full p-4 md:px-6 md:py-8 lg:px-8 lg:py-10 overflow-y-auto">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Account Settings</h1>
+        <p class="text-gray-600 mt-2">Manage your account details and preferences</p>
     </div>
-      <style>
+    
+    <style>
         .field-changed {
             border-color: #93c5fd !important; /* light blue border */
         }
@@ -22,40 +23,52 @@
         .field-changed + .change-indicator {
             display: block;
         }
-        
-        /* Success popup styles */
+          /* Success popup styles */
         .success-popup {
             display: none;
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #10b981; /* Green background */
+            top: 24px;
+            right: 24px;
+            background-color: #10b981;
             color: white;
-            padding: 16px 24px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
             z-index: 1000;
-            animation: slide-in 0.3s ease-out, fade-out 0.5s ease-in 2.5s forwards;
+            animation: slide-in 0.4s cubic-bezier(0.4, 0, 0.2, 1), fade-out 0.5s ease-in 2.5s forwards;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        
-        @keyframes slide-in {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+          @keyframes slide-in {
+            from { 
+                transform: translateX(100%) scale(0.9); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateX(0) scale(1); 
+                opacity: 1; 
+            }
         }
         
         @keyframes fade-out {
-            from { opacity: 1; }
-            to { opacity: 0; visibility: hidden; }
+            from { 
+                opacity: 1; 
+                transform: scale(1); 
+            }
+            to { 
+                opacity: 0; 
+                transform: scale(0.95); 
+                visibility: hidden; 
+            }
         }
     </style>
     
     <!-- Success popup notification -->
     <div id="success-popup" class="success-popup">
         <div class="flex items-center">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
             </svg>
-            <span>Change successful</span>
+            <span class="font-medium">Changes saved successfully</span>
         </div>
     </div>    
     <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -118,7 +131,7 @@
                         {% endif %}
                     </div>
                 </div>
-            </div>        
+            </div>
         </div>
     </div>
 </div>
@@ -185,8 +198,7 @@
                 // Update form status
                 checkFormChanges();
             });
-            
-            // Also check on blur for better UX
+              // Also check on blur for better UX
             input.addEventListener('blur', function() {
                 if (this.value.trim() === originalValue.trim()) {
                     this.classList.remove('field-changed');
@@ -196,7 +208,8 @@
                 
                 // Update form status
                 checkFormChanges();
-            });        });
+            });
+        });
         
         // Handle form submission
         form.addEventListener('submit', function(event) {
