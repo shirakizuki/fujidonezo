@@ -1,0 +1,103 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block content %}
+<div class="flex flex-col md:flex-row max-h-[calc(100vh-4rem)] w-full">
+    <!-- Left side - Form -->
+    <div class="w-full md:w-1/2 p-4 md:p-8 lg:p-12 flex flex-col justify-center">
+        <div class="max-w-md mx-auto">
+            <h1 class="text-3xl font-bold text-neutral-950 mb-8">Create Account</h1>
+            
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                  <div class="flex flex-col md:flex-row gap-4">
+                    <div class="space-y-2 flex-1">
+                        <label for="id_first_name" class="block text-sm text-neutral-950">First Name</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.first_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="space-y-2 flex-1">
+                        <label for="id_last_name" class="block text-sm text-neutral-950">Last Name</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.last_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="space-y-2">
+                    <label for="id_email" class="block text-sm text-neutral-950">Email Address</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.email.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                  <div class="space-y-2">
+                    <label for="id_password" class="block text-sm text-neutral-950">Password</label>
+                    {{ form.password }}
+                    <!-- Password Strength Meter -->
+                    <div class="mt-1">
+                        <meter id="password-strength-meter" class="w-full h-2" min="0" max="5" value="0"></meter>
+                    </div>
+                    <p id="password-strength-text" class="text-sm mt-1 font-medium"></p>
+                    <div class="text-xs text-neutral-600 mt-1">
+                        <p>Password must contain:</p>
+                        <ul class="password-criteria-list list-none ml-1 space-y-1 mt-1">
+                            <li id="criteria-length"><span class="inline-block w-4">•</span> At least 8 characters</li>
+                            <li id="criteria-uppercase"><span class="inline-block w-4">•</span> At least 1 uppercase letter</li>
+                            <li id="criteria-lowercase"><span class="inline-block w-4">•</span> At least 1 lowercase letter</li>
+                            <li id="criteria-number"><span class="inline-block w-4">•</span> At least 1 number</li>
+                            <li id="criteria-special"><span class="inline-block w-4">•</span> At least 1 special character</li>
+                        </ul>
+                    </div>
+                    {% if form.password.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.password.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                  <div class="space-y-2">
+                    <label for="id_confirm_password" class="block text-sm text-neutral-950">Confirm Password</label>
+                    {{ form.confirm_password }}
+                    <p id="password-match-status" class="text-xs mt-1"></p>
+                    {% if form.confirm_password.errors %}
+                        <p class="text-red-500 text-xs mt-1">{{ form.confirm_password.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                  <button type="submit" 
+                    class="w-full py-3 bg-orange-400 text-white rounded-md hover:bg-orange-500 transition duration-300 font-medium">
+                    Create Account
+                </button>
+                
+                <div class="text-sm text-neutral-700">
+                    <p>By continuing, you agree to Donezo's <a href="#" class="text-orange-400 hover:underline">Terms of Service</a> and 
+                    <a href="#" class="text-orange-400 hover:underline">Privacy Policy</a>.</p>
+                </div>
+            </form>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-neutral-700">
+                    Already have an account? <a href="{% url 'theme:login' %}" class="text-orange-400 hover:underline font-medium">LOG IN HERE!</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right side - Image -->
+    <div class="hidden md:flex md:w-1/2 bg-orange-50 items-center justify-center p-4">
+        <img src="{% static 'images/My password-pana.png' %}" alt="Registration Illustration" class="max-w-full max-h-full object-contain">
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/password-strength.js' %}"></script>
+{% endblock %}
