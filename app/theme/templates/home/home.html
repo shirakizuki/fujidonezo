@@ -15,11 +15,10 @@
     
     <!-- Mobile Backdrop -->
     <div id="backdrop" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden md:hidden"></div>
-    
-    <!-- Sidebar -->
+      <!-- Sidebar -->
     <div id="sidebar" class="fixed z-50 top-0 left-0 h-full w-3/4 max-w-xs sm:max-w-sm bg-orange-100 -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out md:relative md:w-81 flex flex-col md:rounded-2xl shadow-lg overflow-y-auto">
         <!-- Close Button (Mobile Only) -->
-        <div class="flex flex-col gap-2 p-3 md:py-8 md:px-4">
+        <div class="flex flex-col gap-2 p-3 md:py-8 md:px-4 h-full">
             <div class="flex flex-row justify-between">
                 <h1 class="text-neutral-950 text-2xl font-bold">Menu</h1>
                 <button id="closeSidebar" class="md:hidden text-lg font-bold px-3 py-1 rounded-full bg-orange-200">
@@ -66,6 +65,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"></path>
                 </svg>
                 <span class="text-md">Help</span>
+            </a>            <!-- Spacer to push logout to bottom -->
+            <div class="flex-grow"></div>
+            <!-- Logout Button -->
+            <a id="logoutButton" class="mt-auto px-4 py-2 rounded-md flex items-center gap-2 font-sans hover:font-medium hover:bg-red-200 transition-colors duration-200 text-red-700 cursor-pointer">
+                <svg data-slot="icon" fill="none" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"></path>
+                </svg>
+                <span class="text-md font-medium">Logout</span>
             </a>
         </div>
     </div>
@@ -73,7 +80,20 @@
     <main class="w-screen flex flex-row justify-between">
         {% block main %}
         {% endblock %}
-    </main>    
+    </main>        <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center">
+        <div class="bg-white rounded-lg shadow-md w-full max-w-xs mx-4 transform transition-all duration-300">
+            <div class="px-5 py-4">
+                <h3 class="text-base font-medium text-gray-800">Confirm Logout</h3>
+                <p class="mt-1 text-sm text-gray-600">Are you sure you want to log out?</p>
+                <div class="mt-4 flex justify-end gap-2">
+                    <button id="cancelLogout" class="px-4 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded text-sm font-medium transition-colors duration-200">Cancel</button>
+                    <a href="{% url 'theme:logout' %}" class="px-4 py-1.5 bg-orange-500 hover:bg-orange-600 text-white rounded text-sm font-medium transition-colors duration-200">Log Out</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const sidebar = document.getElementById('sidebar');
@@ -81,6 +101,9 @@
             const close = document.getElementById('closeSidebar');
             const backdrop = document.getElementById('backdrop');
             const sidebarLinks = document.querySelectorAll('#sidebar a');
+            const logoutButton = document.getElementById('logoutButton');
+            const logoutModal = document.getElementById('logoutModal');
+            const cancelLogout = document.getElementById('cancelLogout');
             
             // Function to open sidebar
             const openSidebar = () => {
@@ -123,6 +146,31 @@
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && !sidebar.classList.contains('-translate-x-full')) {
                     closeSidebar();
+                }
+                
+                // Also close logout modal on Escape key
+                if (e.key === 'Escape' && !logoutModal.classList.contains('hidden')) {
+                    logoutModal.classList.add('hidden');
+                }
+            });
+
+            // Open logout modal
+            logoutButton.addEventListener('click', () => {
+                logoutModal.classList.remove('hidden');
+                logoutModal.classList.add('flex');
+            });
+
+            // Close logout modal
+            cancelLogout.addEventListener('click', () => {
+                logoutModal.classList.add('hidden');
+                logoutModal.classList.remove('flex');
+            });
+            
+            // Close modal when clicking outside
+            logoutModal.addEventListener('click', (e) => {
+                if (e.target === logoutModal) {
+                    logoutModal.classList.add('hidden');
+                    logoutModal.classList.remove('flex');
                 }
             });
         });

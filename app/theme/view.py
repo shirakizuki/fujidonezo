@@ -12,10 +12,14 @@ from django.urls import reverse
 from django.http import JsonResponse
 from .forms import LoginForm, RegistrationForm, PasswordResetRequestForm, SetNewPasswordForm, TaskForm
 from .models import EmailVerificationToken, PasswordResetToken, Tasks, Labels
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.db.models import Q
 from django.http import JsonResponse
 import json
+
+def logout(request):
+    auth_logout(request)
+    return redirect('theme:login')
 
 @login_required(login_url='/login/')
 def app(request):
@@ -371,13 +375,55 @@ def calendar(request):
             date_str = task.due_date.strftime("%Y-%m-%d")
             if date_str not in calendar_tasks:
                 calendar_tasks[date_str] = []
+            
+            # Get label names for the task (if any)
+            label_names = [label.name for label in task.labels.all()]
+            
             calendar_tasks[date_str].append({
                 'id': task.id,
                 'title': task.title,
                 'description': task.description,
                 'completed': task.completed,
-                'due_time': task.due_time.strftime('%H:%M') if task.due_time else None
+                'due_time': task.due_time.strftime('%H:%M') if task.due_time else None,
+                'labels': label_names
             })
+    
+    # Get upcoming tasks for sidebar (sorted by due date)
+    upcoming_tasks = Tasks.objects.filter(
+        user=request.user, 
+        completed=False, 
+        due_date__gte=today
+    ).order_by('due_date', 'due_time').select_related('user').prefetch_related('labels')[:4]
+    
+    # Format upcoming tasks for the sidebar
+    upcoming_task_list = []
+    for task in upcoming_tasks:
+        # Get label names for task
+        labels = list(task.labels.all())
+        label_name = labels[0].name if labels else "Task"
+        
+        # Calculate time difference in hours if due_time exists
+        hours_remaining = 0
+        if task.due_time:
+            # Calculate hours between now and due time/date
+            now = timezone.now()
+            due_datetime = timezone.make_aware(datetime.combine(task.due_date, task.due_time))
+            time_diff = due_datetime - now
+            hours_remaining = max(0, round(time_diff.total_seconds() / 3600, 2))
+            
+        upcoming_task_list.append({
+            'id': task.id,
+            'title': task.title,
+            'label_name': label_name,
+            'hours': hours_remaining,
+            'due_date': task.due_date,
+            'due_time': task.due_time
+        })
+      # Get completed tasks for sidebar
+    completed_tasks = Tasks.objects.filter(
+        user=request.user, 
+        completed=True
+    ).order_by('-due_date')[:5]  # Show last 5 completed tasks
     
     return render(request, 'home/calendar.html', {
         'user': request.user,
@@ -385,7 +431,9 @@ def calendar(request):
         'today': today.strftime("%Y-%m-%d"),
         'current_month': current_month,
         'current_year': current_year,
-        'tasks': tasks
+        'tasks': tasks,
+        'upcoming_tasks': upcoming_task_list,
+        'completed_tasks': completed_tasks
     })
 
 @login_required(login_url='/login/')

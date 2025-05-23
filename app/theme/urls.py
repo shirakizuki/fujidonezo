@@ -7,6 +7,7 @@ urlpatterns = [
     # AUTHENTICATION URLS
     path('', view.login, name='login'),
     path('register/', view.register, name='register'),
+    path('logout/', view.logout, name='logout'),
     path('verify/<uuid:token>/', view.verify_email, name='verify_email'),
     path('verification-sent/', view.verification_sent, name='verification_sent'),
     path('resend-verification/', view.resend_verification, name='resend_verification'),
