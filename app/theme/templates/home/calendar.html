@@ -2,346 +2,58 @@
 {% load static %}
 {% load tailwind_tags %}
 {% block main %}
-<div class="flex w-full h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50 overflow-hidden">
-    <!-- Main calendar area -->
-    <div class="flex-1 p-6 overflow-y-auto">
-        <!-- Top navigation bar -->
-        <div class="flex justify-between items-center mb-8">
-            <!-- Left side: Today button and month navigation -->
-            <div class="flex items-center space-x-6">
-                <button id="today-btn" class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-sm font-medium hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
-                    Today
-                </button>
-                <div class="flex items-center space-x-3">
-                    <button id="prev-month" class="p-3 rounded-xl hover:bg-white hover:shadow-md transition-all duration-200 bg-white/50 backdrop-blur-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                    <button id="next-month" class="p-3 rounded-xl hover:bg-white hover:shadow-md transition-all duration-200 bg-white/50 backdrop-blur-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                    <h1 class="text-2xl font-bold text-gray-800" id="calendar-header">May 2025</h1>
-                </div>
-            </div>
-            <!-- Right side: View options -->
-            <div class="flex items-center space-x-4">                <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
-                    <button id="week-view-btn" class="px-6 py-2.5 text-sm font-medium bg-gradient-to-r from-blue-600 to-indigo-600 text-white">Week</button>
-                    <button id="month-view-btn" class="px-6 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors duration-200">Month</button>
-                    <button id="agenda-view-btn" class="px-6 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors duration-200 border-l border-gray-100">Agenda</button>
-                </div>
-                <button id="add-event-btn" class="p-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+<div class="w-full p-3 md:px-4 md:py-5 lg:px-6 lg:py-6 overflow-y-auto">
+    <div class="flex flex-row justify-between items-center mb-6">
+        <div class="flex items-center space-x-4">
+            <h1 class="text-2xl font-bold" id="calendar-header">Calendar</h1>
+            <div class="flex space-x-2">
+                <button id="prev-month" class="p-2 bg-gray-100 hover:bg-gray-200 rounded-md">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                        <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <button id="today-btn" class="px-3 py-1 bg-orange-200 hover:bg-orange-300 rounded-md text-sm">Today</button>
+                <button id="next-month" class="p-2 bg-gray-100 hover:bg-gray-200 rounded-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
                     </svg>
                 </button>
             </div>
         </div>
-          <!-- Calendar container -->
-        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">            <!-- Month View -->
-            <div id="month-view-container" class="hidden">
-                <!-- Weekday headers -->
-                <div class="grid grid-cols-7 bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-                    <div class="text-center py-4 font-semibold text-gray-600 text-sm">SUN</div> 
-                    <div class="text-center py-4 font-semibold text-gray-600 text-sm">MON</div>
-                    <div class="text-center py-4 font-semibold text-gray-600 text-sm">TUE</div>
-                    <div class="text-center py-4 font-semibold text-gray-600 text-sm">WED</div>
-                    <div class="text-center py-4 font-semibold text-gray-600 text-sm">THU</div>
-                    <div class="text-center py-4 font-semibold text-gray-600 text-sm">FRI</div>
-                    <div class="text-center py-4 font-semibold text-gray-600 text-sm">SAT</div>
-                </div>
-                
-                <!-- Calendar grid -->
-                <div id="calendar-grid" class="grid grid-cols-7">
-                    <!-- Calendar cells will be generated by JavaScript -->
-                </div>
-            </div>
-            
-            <!-- Week View -->
-            <div id="week-view-container">
-                <!-- Week view header -->
-                <div class="flex bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200">
-                    <!-- Time column -->
-                    <div class="w-20 flex-shrink-0 border-r border-gray-200 p-4">
-                        <div class="text-sm font-medium text-gray-600">Time</div>
-                    </div>                    <!-- Days columns -->
-                    <div class="flex-1 grid grid-cols-7">
-                        <div class="text-center py-4 border-r border-gray-200">
-                            <div class="text-xs text-gray-500 font-medium">MON</div>
-                            <div class="text-xl font-bold text-gray-700 mt-1" id="week-day-1">19</div>
-                        </div>
-                        <div class="text-center py-4 border-r border-gray-200">
-                            <div class="text-xs text-blue-500 font-medium">TUE</div>
-                            <div class="text-xl font-bold text-blue-700 mt-1" id="week-day-2">20</div>
-                        </div>
-                        <div class="text-center py-4 border-r border-gray-200">
-                            <div class="text-xs text-gray-500 font-medium">WED</div>
-                            <div class="text-xl font-bold text-gray-700 mt-1" id="week-day-3">21</div>
-                        </div>
-                        <div class="text-center py-4 border-r border-gray-200">
-                            <div class="text-xs text-gray-500 font-medium">THU</div>
-                            <div class="text-xl font-bold text-gray-700 mt-1" id="week-day-4">22</div>
-                        </div>
-                        <div class="text-center py-4 border-r border-gray-200">
-                            <div class="text-xs text-gray-500 font-medium">FRI</div>
-                            <div class="text-xl font-bold text-gray-700 mt-1" id="week-day-5">23</div>
-                        </div>
-                        <div class="text-center py-4 border-r border-gray-200">
-                            <div class="text-xs text-gray-500 font-medium">SAT</div>
-                            <div class="text-xl font-bold text-gray-700 mt-1" id="week-day-6">24</div>
-                        </div>
-                        <div class="text-center py-4">
-                            <div class="text-xs text-gray-500 font-medium">SUN</div>
-                            <div class="text-xl font-bold text-gray-700 mt-1" id="week-day-0">25</div>
-                        </div>
-                    </div>                </div>                  <!-- Week time grid -->
-                <div class="flex h-[600px] overflow-y-auto relative scroll-smooth" id="week-time-grid">
-                    <!-- Time labels column -->
-                    <div class="w-20 flex-shrink-0 relative border-r border-gray-200 bg-gray-50">
-                        <div class="absolute w-full" style="top: 0px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">01:00</div></div>
-                        <div class="absolute w-full" style="top: 60px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">02:00</div></div>
-                        <div class="absolute w-full" style="top: 120px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">03:00</div></div>
-                        <div class="absolute w-full" style="top: 180px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">04:00</div></div>                        <div class="absolute w-full" style="top: 240px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">05:00</div></div>
-                        <div class="absolute w-full" style="top: 300px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">06:00</div></div>
-                        <div class="absolute w-full" style="top: 360px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">07:00</div></div>
-                        <div class="absolute w-full" style="top: 420px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">08:00</div></div>
-                        <div class="absolute w-full" style="top: 480px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">09:00</div></div>                        <div class="absolute w-full" style="top: 540px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">10:00</div></div>
-                        <div class="absolute w-full" style="top: 600px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">11:00</div></div>
-                        <div class="absolute w-full" style="top: 660px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">12:00</div></div>
-                        <div class="absolute w-full" style="top: 720px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">13:00</div></div>
-                        <div class="absolute w-full" style="top: 780px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">14:00</div></div>                        <div class="absolute w-full" style="top: 840px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">15:00</div></div>
-                        <div class="absolute w-full" style="top: 900px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">16:00</div></div>
-                        <div class="absolute w-full" style="top: 960px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">17:00</div></div>
-                        <div class="absolute w-full" style="top: 1020px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">18:00</div></div>
-                        <div class="absolute w-full" style="top: 1080px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">19:00</div></div>
-                        <div class="absolute w-full" style="top: 1140px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">20:00</div></div>
-                        <div class="absolute w-full" style="top: 1200px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">21:00</div></div>
-                        <div class="absolute w-full" style="top: 1260px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">22:00</div></div>
-                        <div class="absolute w-full" style="top: 1320px"><div class="relative -top-3 text-xs text-gray-500 text-right pr-3 font-medium">23:00</div></div>
-                    </div>
-                    
-                    <!-- Days grid -->                    <div class="flex-1 grid grid-cols-7 relative bg-white h-[1440px]" id="week-events-container">
-                        <!-- Horizontal time lines -->
-                        <div class="absolute w-full border-t border-gray-100" style="top: 0px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 60px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 120px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 180px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 240px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 300px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 360px"></div>                        <div class="absolute w-full border-t border-gray-100" style="top: 420px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 480px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 540px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 600px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 660px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 720px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 780px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 840px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 900px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 960px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 1020px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 1080px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 1140px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 1200px"></div>
-                        <div class="absolute w-full border-t border-gray-100" style="top: 1260px"></div>                        <div class="absolute w-full border-t border-gray-100" style="top: 1320px"></div>
-                        <!-- No duplicate hour lines needed - already defined above -->
-                        
-                        <!-- Vertical day dividers -->
-                        <div class="absolute h-full border-r border-gray-100" style="left: 14.28%"></div>
-                        <div class="absolute h-full border-r border-gray-100" style="left: 28.57%"></div>
-                        <div class="absolute h-full border-r border-gray-100" style="left: 42.85%"></div>
-                        <div class="absolute h-full border-r border-gray-100" style="left: 57.14%"></div>
-                        <div class="absolute h-full border-r border-gray-100" style="left: 71.42%"></div>
-                        <div class="absolute h-full border-r border-gray-100" style="left: 85.71%"></div>
-                        
-                        <!-- Events will be placed here by JavaScript -->
-                    </div>
-                </div>
-            </div>
-              <!-- Agenda View -->
-            <div id="agenda-view-container" class="hidden p-6">
-                <div class="space-y-8" id="agenda-content">
-                    <!-- Agenda items will be populated by JavaScript -->
-                </div>
-            </div>
-        </div>
     </div>
-      <!-- Sidebar -->
-    <div class="hidden md:block w-72 border-l p-4 bg-gray-50">
-        <!-- Mini calendar -->
-        <div class="bg-white rounded-lg shadow-sm p-4 mb-5">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-medium" id="mini-calendar-title">May 2025</h3>
-                <div class="flex space-x-2">
-                    <button id="mini-prev-month" class="p-1 text-blue-500 hover:text-blue-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                    <button id="mini-next-month" class="p-1 text-blue-500 hover:text-blue-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
 
-            <!-- Days of week -->
-            <div class="grid grid-cols-7 gap-1 text-center text-xs text-gray-500 mb-2">
-                <div>Sun</div>
-                <div>Mon</div>
-                <div>Tue</div>
-                <div>Wed</div>
-                <div>Thu</div>
-                <div>Fri</div>
-                <div>Sat</div>
-            </div>
-
-            <!-- Calendar grid -->
-            <div id="mini-calendar-grid" class="grid grid-cols-7 gap-1 mt-1">
-                <!-- This will be populated by JavaScript -->
-            </div>
-        </div>        <!-- Calendar section -->
-        <div class="bg-white rounded-lg shadow-sm p-4 mb-5">
-            <h3 class="text-lg font-medium mb-4">Upcoming Tasks</h3>
-            <div class="space-y-3">
-                <!-- Dynamic tasks from the database -->                {% if upcoming_tasks %}
-                    {% for task in upcoming_tasks %}                        <div class="flex items-center justify-between task-item-{{ task.id }}">
-                            <div class="flex items-center">
-                                <!-- Checkbox for upcoming tasks -->
-                                <div class="flex-shrink-0 mt-1">
-                                    {% if forloop.counter == 1 %}
-                                        <div class="h-6 w-6 rounded-full border-2 border-green-400 flex items-center justify-center">
-                                            <input type="checkbox" class="complete-task-cb appearance-none checked:bg-green-400 h-4 w-4 rounded-full cursor-pointer transition-colors" data-task-id="{{ task.id }}">
-                                        </div>
-                                    {% elif forloop.counter == 2 %}
-                                        <div class="h-6 w-6 rounded-full border-2 border-blue-400 flex items-center justify-center">
-                                            <input type="checkbox" class="complete-task-cb appearance-none checked:bg-blue-400 h-4 w-4 rounded-full cursor-pointer transition-colors" data-task-id="{{ task.id }}">
-                                        </div>
-                                    {% elif forloop.counter == 3 %}
-                                        <div class="h-6 w-6 rounded-full border-2 border-purple-400 flex items-center justify-center">
-                                            <input type="checkbox" class="complete-task-cb appearance-none checked:bg-purple-400 h-4 w-4 rounded-full cursor-pointer transition-colors" data-task-id="{{ task.id }}">
-                                        </div>
-                                    {% elif forloop.counter == 4 %}
-                                        <div class="h-6 w-6 rounded-full border-2 border-pink-400 flex items-center justify-center">
-                                            <input type="checkbox" class="complete-task-cb appearance-none checked:bg-pink-400 h-4 w-4 rounded-full cursor-pointer transition-colors" data-task-id="{{ task.id }}">
-                                        </div>
-                                    {% else %}
-                                        <div class="h-6 w-6 rounded-full border-2 border-gray-400 flex items-center justify-center">
-                                            <input type="checkbox" class="complete-task-cb appearance-none checked:bg-gray-400 h-4 w-4 rounded-full cursor-pointer transition-colors" data-task-id="{{ task.id }}">
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                <span class="ml-3 truncate max-w-[180px]">{{ task.title }}</span>
-                            </div>                            <div class="flex items-center">
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="text-center py-4">
-                        <p class="text-gray-500">No upcoming tasks</p>
-                    </div>
-                {% endif %}
-            </div>
+    <!-- Calendar container -->
+    <div class="bg-white rounded-lg shadow-md">
+        <!-- Weekday headers -->
+        <div class="grid grid-cols-7 border-b text-center py-2 font-medium text-gray-500">
+            <div>MON</div>
+            <div>TUE</div>
+            <div>WED</div>
+            <div>THU</div>
+            <div>FRI</div>
+            <div>SAT</div>
+            <div>SUN</div>
         </div>
-
-        <!-- Completed section -->
-        <div class="bg-white rounded-lg shadow-sm p-4">
-            <h3 class="text-lg font-medium mb-4">Completed Tasks</h3>
-            <div class="space-y-3">
-                {% if completed_tasks %}
-                    {% for task in completed_tasks %}                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <!-- Circular green checkmarks for completed tasks -->
-                                {% if forloop.counter == 1 %}
-                                    <div class="w-5 h-5 bg-green-500 rounded-full mr-3 flex items-center justify-center">
-                                {% elif forloop.counter == 2 %}
-                                    <div class="w-5 h-5 bg-blue-500 rounded-full mr-3 flex items-center justify-center">
-                                {% elif forloop.counter == 3 %}
-                                    <div class="w-5 h-5 bg-purple-500 rounded-full mr-3 flex items-center justify-center">
-                                {% elif forloop.counter == 4 %}
-                                    <div class="w-5 h-5 bg-pink-500 rounded-full mr-3 flex items-center justify-center">
-                                {% else %}
-                                    <div class="w-5 h-5 bg-gray-500 rounded-full mr-3 flex items-center justify-center">
-                                {% endif %}
-                                    <svg class="w-3 h-3 text-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                                <!-- Apply strikethrough styling to show completion -->
-                                <span class="line-through text-gray-500 truncate max-w-[180px]">{{ task.title }}</span>
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="text-center py-4">
-                        <p class="text-gray-500">No completed tasks</p>
-                    </div>
-                {% endif %}
-            </div>
+        
+        <!-- Calendar grid -->
+        <div id="calendar-grid" class="grid grid-cols-7 auto-rows-fr">
+            <!-- Calendar cells will be generated by JavaScript -->
         </div>
     </div>
 
-    <!-- Enhanced Task detail modal -->
-    <div id="task-detail-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 overflow-hidden transform transition-all duration-300">
-            <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
-                <h3 id="task-detail-title" class="text-xl font-semibold text-gray-800"></h3>
+    <!-- Task detail modal -->
+    <div id="task-detail-modal" class="hidden fixed inset-0 bg-black/50 bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+            <div class="p-4 border-b">
+                <h3 id="task-detail-title" class="text-lg font-semibold"></h3>
             </div>
-            <div class="p-6 space-y-4">
-                <div id="task-detail-time" class="text-sm text-gray-500 flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span></span>
-                </div>
-                <p id="task-detail-description" class="text-gray-700 leading-relaxed"></p>
+            <div class="p-4 space-y-3">
+                <div id="task-detail-time" class="text-sm text-gray-500"></div>
+                <p id="task-detail-description" class="text-gray-700"></p>
                 <div id="task-detail-status" class="mt-4"></div>
             </div>
-            <div class="p-6 bg-gray-50 flex justify-end space-x-3">
-                <button id="close-task-detail" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors duration-200">Close</button>
-                <button id="edit-task-detail" class="px-4 py-2 bg-gradient-to-r from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">Edit</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Event Modal -->
-    <div id="add-event-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center backdrop-blur-sm">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform transition-all duration-300">
-            <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-green-50 to-emerald-50">
-                <h3 class="text-xl font-semibold text-gray-800">Add New Event</h3>
-            </div>
-            <div class="p-6 space-y-4">
-                <div>
-                    <label for="event-title" class="block text-sm font-medium text-gray-700 mb-2">Event Title</label>
-                    <input type="text" id="event-title" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter event title">
-                </div>
-                <div>
-                    <label for="event-date" class="block text-sm font-medium text-gray-700 mb-2">Date</label>
-                    <input type="date" id="event-date" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                </div>
-                <div>
-                    <label for="event-time" class="block text-sm font-medium text-gray-700 mb-2">Time</label>
-                    <input type="time" id="event-time" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                </div>
-                <div>
-                    <label for="event-description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                    <textarea id="event-description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter event description"></textarea>
-                </div>
-                <div>
-                    <label for="event-category" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                    <select id="event-category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option value="blue">Software Engineering</option>
-                        <option value="green">Product Design</option>
-                        <option value="purple">User Research</option>
-                        <option value="pink">Marketing</option>
-                    </select>
-                </div>
-            </div>
-            <div class="p-6 bg-gray-50 flex justify-end space-x-3">
-                <button id="cancel-add-event" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors duration-200">Cancel</button>
-                <button id="save-event" class="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">Save Event</button>
+            <div class="p-4 bg-gray-50 flex justify-end space-x-2">
+                <button id="close-task-detail" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-md">Close</button>
             </div>
         </div>
     </div>
@@ -350,12 +62,11 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Calendar data from backend
-        const calendarTasks = JSON.parse('{{ calendar_tasks|safe }}');
-        const today = "{{ today }}";        let currentMonth = parseInt("{{ current_month }}", 10);
-        let currentYear = parseInt("{{ current_year }}", 10);
-        let currentView = 'week'; // Default view
-        let currentWeekStart = null; // Start date of current week view
-          
+        const calendarTasks = {{ calendar_tasks|safe }};
+        const today = "{{ today }}";
+        let currentMonth = {{ current_month }};
+        let currentYear = {{ current_year }};
+        
         // DOM elements
         const calendarGrid = document.getElementById('calendar-grid');
         const calendarHeader = document.getElementById('calendar-header');
@@ -364,152 +75,12 @@
         const todayBtn = document.getElementById('today-btn');
         const taskDetailModal = document.getElementById('task-detail-modal');
         const closeTaskDetailBtn = document.getElementById('close-task-detail');
-        const miniCalendarGrid = document.getElementById('mini-calendar-grid');
-        const miniCalendarHeader = document.getElementById('mini-calendar-header');
         
-        // View elements
-        const monthViewBtn = document.getElementById('month-view-btn');
-        const weekViewBtn = document.getElementById('week-view-btn');
-        const agendaViewBtn = document.getElementById('agenda-view-btn');
-        const monthViewContainer = document.getElementById('month-view-container');
-        const weekViewContainer = document.getElementById('week-view-container');
-        const agendaViewContainer = document.getElementById('agenda-view-container');
-        const weekEventsContainer = document.getElementById('week-events-container');
-          // Month names for header
+        // Month names for header
         const monthNames = ["January", "February", "March", "April", "May", "June",
                            "July", "August", "September", "October", "November", "December"];
-                           
-        // Sample calendar categories for the sidebar
-        const calendarCategories = [
-            { name: "MATT ALEXIUS MERANO", color: "blue" },
-            { name: "27600-AUTOMATA & LANGUAGE THEORY", color: "green" },
-            { name: "27608-INFORMATION ASSURANCE & SECURITY", color: "pink" },
-            { name: "27624-COMP. ORGANIZATION & ASSEMBLY LANG.", color: "teal" },
-            { name: "27632-TECHNOPRENEURSHIP", color: "yellow" },
-            { name: "27640-CS ELECTIVE 2", color: "purple" }
-        ];
-          // Initialize the calendar categories in sidebar
-        function initializeCalendarSidebar() {
-            // We're keeping our static HTML structure that matches the reference image
-            // This function is now a no-op since we have static HTML that matches the reference image
-            
-            // Original dynamic version:
-            /*
-            const calendarsList = document.getElementById('calendars-list');
-            calendarsList.innerHTML = '';
-            
-            calendarCategories.forEach(cat => {
-                const calItem = document.createElement('div');
-                calItem.className = 'flex items-center justify-between';
-                
-                const colorDot = document.createElement('div');
-                const colorClass = getColorClass(cat.color);
-                
-                calItem.innerHTML = `
-                    <div class="flex items-center">
-                        <span class="w-3 h-3 rounded-full ${colorClass} mr-2"></span>
-                        <span class="text-sm">${cat.name}</span>
-                    </div>
-                    <button class="p-1 text-gray-400 hover:text-gray-600">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                        </svg>
-                    </button>
-                `;
-                
-                calendarsList.appendChild(calItem);
-            });
-            */
-        }
         
-        // Get tailwind color class from color name
-        function getColorClass(color) {
-            const colorMap = {
-                'blue': 'bg-blue-500',
-                'green': 'bg-green-500',
-                'pink': 'bg-pink-500',
-                'teal': 'bg-teal-500',
-                'yellow': 'bg-yellow-500',
-                'purple': 'bg-purple-500',
-            };
-            
-            return colorMap[color] || 'bg-gray-500';
-        }        // Generate and render mini calendar for sidebar
-        function renderMiniCalendar(month, year) {
-            const miniCalendarGrid = document.getElementById('mini-calendar-grid');
-            const miniCalendarTitle = document.getElementById('mini-calendar-title');
-            
-            if (!miniCalendarGrid || !miniCalendarTitle) return;
-            
-            // Update mini calendar title
-            const monthNames = ["January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"];
-            miniCalendarTitle.textContent = `${monthNames[month - 1]} ${year}`;
-            
-            // Clear previous calendar
-            miniCalendarGrid.innerHTML = '';
-            
-            // Get first day of month and number of days
-            const firstDay = new Date(year, month - 1, 1).getDay();
-            const daysInMonth = new Date(year, month, 0).getDate();
-            const daysInPrevMonth = new Date(year, month - 1, 0).getDate();
-            
-            // Add empty cells for previous month
-            for (let i = firstDay - 1; i >= 0; i--) {
-                const cell = document.createElement('div');
-                cell.className = 'text-center py-1 text-xs text-gray-300 cursor-pointer hover:bg-gray-100 rounded';
-                cell.textContent = daysInPrevMonth - i;
-                miniCalendarGrid.appendChild(cell);
-            }
-            
-            // Add days of current month
-            for (let day = 1; day <= daysInMonth; day++) {
-                const cell = document.createElement('div');
-                const isToday = (year === new Date().getFullYear() && 
-                               month - 1 === new Date().getMonth() && 
-                               day === new Date().getDate());
-                
-                if (isToday) {
-                    cell.className = 'text-center py-1 text-xs bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600';
-                } else {
-                    cell.className = 'text-center py-1 text-xs text-gray-700 cursor-pointer hover:bg-blue-100 rounded';
-                }
-                
-                cell.textContent = day;
-                
-                // Add click event to navigate to specific date
-                cell.addEventListener('click', function() {
-                    // Navigate to the clicked date in main calendar
-                    currentMonth = month;
-                    currentYear = year;
-                    renderCalendar(currentMonth, currentYear);
-                });
-                
-                miniCalendarGrid.appendChild(cell);
-            }
-            
-            // Add remaining cells for next month
-            const totalCells = miniCalendarGrid.children.length;
-            const remainingCells = 42 - totalCells; // 6 rows × 7 days = 42
-            for (let day = 1; day <= remainingCells && totalCells < 42; day++) {
-                const cell = document.createElement('div');
-                cell.className = 'text-center py-1 text-xs text-gray-300 cursor-pointer hover:bg-gray-100 rounded';
-                cell.textContent = day;
-                miniCalendarGrid.appendChild(cell);
-            }
-        }
-        
-        // Function to highlight a specific date in the main calendar
-        function highlightDate(dateString) {
-            // Implementation would depend on your navigation needs
-            // For now, just log the date
-            console.log('Selected date:', dateString);
-            
-            // Future enhancement: scroll to the date in the main calendar
-            // Or switch to day view showing only this date
-        }
-        
-        // Generate and render main calendar
+        // Generate and render calendar
         function renderCalendar(month, year) {
             // Clear the grid
             calendarGrid.innerHTML = '';
@@ -517,21 +88,20 @@
             // Update the header
             calendarHeader.textContent = `${monthNames[month - 1]} ${year}`;
             
-            // Also update mini calendar in sidebar
-            renderMiniCalendar(month, year);
-            
             // Get first day of month and last day
             const firstDay = new Date(year, month - 1, 1);
             const lastDay = new Date(year, month, 0);
             const daysInMonth = lastDay.getDate();
             
-            // Get day of week (0 = Sunday)
-            let firstDayOfWeek = firstDay.getDay();
+            // Get day of week for first day of month (0 = Sunday, 1 = Monday, etc.)
+            // Adjust for Monday as first day of week
+            let firstDayOfWeek = firstDay.getDay() - 1; 
+            if (firstDayOfWeek < 0) firstDayOfWeek = 6; // Sunday becomes 6
             
             // Create empty cells for days before first day of month
             for (let i = 0; i < firstDayOfWeek; i++) {
                 const cell = document.createElement('div');
-                cell.className = 'border-r border-b border-gray-200 bg-gray-50 min-h-[120px] p-1';
+                cell.className = 'border border-gray-100 h-32 min-h-[8rem] bg-gray-50 p-1';
                 calendarGrid.appendChild(cell);
             }
             
@@ -543,42 +113,25 @@
                 const dateString = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const isToday = dateString === today;
                 
-                cell.className = 'border-r border-b border-gray-200 min-h-[120px] p-1 overflow-y-auto relative';
+                cell.className = 'border border-gray-100 h-32 min-h-[8rem] p-1 overflow-y-auto';
                 
-                // Mark current day with blue outline
+                // Mark current day with orange background
                 if (isToday) {
-                    cell.classList.add('border-blue-500', 'border-t-2', 'border-l-2');
+                    cell.classList.add('bg-orange-50');
                 }
                 
                 // Day header (date number)
                 const dayHeader = document.createElement('div');
-                dayHeader.className = `text-right font-medium py-1 px-2 ${isToday ? 'text-blue-600' : 'text-gray-700'}`;
+                dayHeader.className = `text-sm font-medium mb-1 ${isToday ? 'text-orange-600' : 'text-gray-700'}`;
                 dayHeader.textContent = day;
                 cell.appendChild(dayHeader);
                 
                 // Add tasks for this day if any
                 if (calendarTasks[dateString]) {
                     const tasks = calendarTasks[dateString];
-                    const tasksContainer = document.createElement('div');
-                    tasksContainer.className = 'space-y-1 px-1';
-                    
                     tasks.forEach(task => {
-                        // Assign a color based on some property of the task
-                        // For now, we'll use the completion status
-                        let categoryColor = task.completed ? 'gray' : 'blue';
-                        
-                        // If the task has a category that matches our sidebar categories, use that color
-                        const matchingCategory = task.category ? 
-                            calendarCategories.find(cat => cat.name.includes(task.category)) : null;
-                        
-                        if (matchingCategory) {
-                            categoryColor = matchingCategory.color;
-                        }
-                        
                         const taskElement = document.createElement('div');
-                        taskElement.className = `px-2 py-1 text-xs rounded ${task.completed ? 
-                            'bg-gray-100 text-gray-500 line-through' : 
-                            `bg-${categoryColor}-100 text-${categoryColor}-800 hover:bg-${categoryColor}-200 cursor-pointer`}`;
+                        taskElement.className = `p-1 mb-1 text-xs rounded-md cursor-pointer ${task.completed ? 'bg-gray-100 text-gray-500 line-through' : 'bg-orange-100 text-orange-800'}`;
                         
                         // Time indicator if available
                         let taskText = task.title;
@@ -598,10 +151,8 @@
                         // Add click event to show task details
                         taskElement.addEventListener('click', showTaskDetail);
                         
-                        tasksContainer.appendChild(taskElement);
+                        cell.appendChild(taskElement);
                     });
-                    
-                    cell.appendChild(tasksContainer);
                 }
                 
                 calendarGrid.appendChild(cell);
@@ -613,7 +164,7 @@
             
             for (let i = 0; i < remainingCells; i++) {
                 const cell = document.createElement('div');
-                cell.className = 'border-r border-b border-gray-200 bg-gray-50 min-h-[120px] p-1';
+                cell.className = 'border border-gray-100 h-32 min-h-[8rem] bg-gray-50 p-1';
                 calendarGrid.appendChild(cell);
             }
         }
@@ -665,22 +216,6 @@
             badge.textContent = completed ? 'Completed' : 'Pending';
             statusEl.appendChild(badge);
             
-            // Set up edit button to open task modal
-            document.getElementById('edit-task-detail').addEventListener('click', function() {
-                // Assuming you have a task modal as in the listAll.html page
-                const taskModal = document.getElementById('task_modal');
-                if (taskModal) {
-                    // Fill task modal with task data
-                    document.getElementById('task_id').value = taskId;
-                    // Other fields would need to be set here...
-                    // Show modal
-                    taskModal.classList.remove('hidden');
-                } else {
-                    // Fallback - redirect to tasks page
-                    window.location.href = "{% url 'theme:tasks' %}";
-                }
-            }, {once: true});
-            
             // Show modal
             taskDetailModal.classList.remove('hidden');
         }
@@ -695,720 +230,38 @@
             if (event.target === taskDetailModal) {
                 taskDetailModal.classList.add('hidden');
             }
-        });          // Navigation will be handled by the consolidated event listeners below
-        
-        // Mini calendar navigation
-        const miniPrevMonthBtn = document.getElementById('mini-prev-month');
-        const miniNextMonthBtn = document.getElementById('mini-next-month');
-        
-        if (miniPrevMonthBtn) {
-            miniPrevMonthBtn.addEventListener('click', function() {
-                currentMonth--;
-                if (currentMonth < 1) {
-                    currentMonth = 12;
-                    currentYear--;
-                }
-                renderCalendar(currentMonth, currentYear);
-            });
-        }
-        
-        if (miniNextMonthBtn) {
-            miniNextMonthBtn.addEventListener('click', function() {
-                currentMonth++;
-                if (currentMonth > 12) {
-                    currentMonth = 1;
-                    currentYear++;
-                }
-                renderCalendar(currentMonth, currentYear);
-            });
-        }
-        
-        // Calendar feed link
-        const calendarFeedLink = document.getElementById('calendar-feed-link');
-        if (calendarFeedLink) {
-            calendarFeedLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                alert("Calendar feed functionality will be implemented soon!");
-            });
-        }
-          // Go to today
-        todayBtn.addEventListener('click', function() {
-            const now = new Date();
-            currentMonth = now.getMonth() + 1;
-            currentYear = now.getFullYear();
-            
-            if (currentView === 'month') {
-                renderCalendar(currentMonth, currentYear);            } else if (currentView === 'week') {
-                // Set current week to the week containing today
-                renderWeekView(now);
-            } else {
-                // Agenda view would go here
-            }
         });
         
-        // View switching
-        if (weekViewBtn) {
-            weekViewBtn.addEventListener('click', function() {
-                switchView('week');
-            });
-        }
-        
-        if (monthViewBtn) {
-            monthViewBtn.addEventListener('click', function() {
-                switchView('month');
-            });
-        }
-        
-        if (agendaViewBtn) {
-            agendaViewBtn.addEventListener('click', function() {
-                switchView('agenda');
-            });
-        }
-        
-        // Function to switch between calendar views
-        function switchView(viewType) {
-            currentView = viewType;
-            
-            // Hide all view containers
-            monthViewContainer.classList.add('hidden');
-            weekViewContainer.classList.add('hidden');
-            agendaViewContainer.classList.add('hidden');
-            
-            // Show the selected view
-            if (viewType === 'month') {
-                monthViewContainer.classList.remove('hidden');
-                renderCalendar(currentMonth, currentYear);            } else if (viewType === 'week') {
-                weekViewContainer.classList.remove('hidden');
-                renderWeekView(new Date());
-                // Add a small delay to ensure the view is visible before scrolling
-                setTimeout(scrollToCurrentTime, 100);
-            } else if (viewType === 'agenda') {
-                agendaViewContainer.classList.remove('hidden');
-                renderAgendaView();
-            }
-            
-            // Update button styles
-            updateViewButtonStyles(viewType);
-        }
-
-        // Function to update view button styles
-        function updateViewButtonStyles(activeView) {
-            // Reset all buttons to inactive style
-            monthViewBtn.className = 'px-6 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors duration-200';
-            weekViewBtn.className = 'px-6 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors duration-200 border-r border-gray-100';
-            agendaViewBtn.className = 'px-6 py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors duration-200 border-l border-gray-100';
-              // Apply active style to the selected button
-            if (activeView === 'month') {
-                monthViewBtn.className = 'px-6 py-2.5 text-sm font-medium bg-gradient-to-r from-blue-600 to-indigo-600 text-white';
-            } else if (activeView === 'week') {
-                weekViewBtn.className = 'px-6 py-2.5 text-sm font-medium bg-gradient-to-r from-blue-600 to-indigo-600 text-white';
-            } else if (activeView === 'agenda') {
-                agendaViewBtn.className = 'px-6 py-2.5 text-sm font-medium bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-l border-gray-100';
-            }
-        }        // Function to render agenda view
-        function renderAgendaView() {
-            const agendaContent = document.getElementById('agenda-content');
-            if (!agendaContent) return;
-            
-            // Group tasks by date
-            const tasksByDate = {};
-            let hasEvents = false;
-            
-            // Process all tasks from calendarTasks (our database data)
-            for (const dateString in calendarTasks) {
-                if (calendarTasks.hasOwnProperty(dateString)) {
-                    const tasks = calendarTasks[dateString];
-                    if (tasks && tasks.length > 0) {
-                        hasEvents = true;
-                        tasksByDate[dateString] = tasks;
-                    }
-                }
-            }
-            
-            // If no events found, show enhanced placeholder
-            if (!hasEvents) {
-                agendaContent.innerHTML = `
-                    <div class="flex flex-col items-center justify-center py-16 px-6">
-                        <div class="w-24 h-24 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full flex items-center justify-center mb-6">
-                            <svg class="w-12 h-12 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                        </div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">No Events Scheduled</h3>
-                        <p class="text-gray-500 text-center mb-6 max-w-sm">Your upcoming events and tasks will appear here. Get organized by adding your first event.</p>
-                        <button id="add-first-event-agenda-btn" class="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 font-medium">
-                            <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                            </svg>
-                            Add First Event
-                        </button>
-                    </div>
-                `;
-                
-                // Add event listener for the Add Event button
-                setTimeout(() => {
-                    const addEventBtn = document.getElementById('add-first-event-agenda-btn');
-                    if (addEventBtn) {
-                        addEventBtn.addEventListener('click', function() {
-                            const addEventModal = document.getElementById('add-event-modal');
-                            if (addEventModal) addEventModal.classList.remove('hidden');
-                        });
-                    }
-                }, 0);
-                
-                return;
-            }
-            
-            // Clear previous content
-            agendaContent.innerHTML = '';
-            
-            // Sort dates in chronological order
-            const sortedDates = Object.keys(tasksByDate).sort();
-            
-            // Create content for each date
-            sortedDates.forEach((dateString, dateIndex) => {
-                const date = new Date(dateString);
-                const tasks = tasksByDate[dateString];
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                
-                // Format date header with enhanced styling
-                const dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][date.getDay()];
-                const monthName = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][date.getMonth()];
-                const dayOfMonth = date.getDate();
-                
-                // Check if date is today, tomorrow, or past
-                const isToday = date.toDateString() === today.toDateString();
-                const tomorrow = new Date(today);
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                const isTomorrow = date.toDateString() === tomorrow.toDateString();
-                const isPast = date < today;
-                
-                // Enhanced date section with better styling
-                const dateSection = document.createElement('div');
-                dateSection.className = 'mb-6 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow duration-300';
-                
-                // Create enhanced date header
-                const dateHeader = document.createElement('div');
-                let headerBgClass = 'bg-gradient-to-r from-gray-50 to-gray-100';
-                let headerTextClass = 'text-gray-700';
-                let statusBadge = '';
-                
-                if (isToday) {
-                    headerBgClass = 'bg-gradient-to-r from-blue-50 to-indigo-50 border-l-4 border-blue-500';
-                    headerTextClass = 'text-blue-700';
-                    statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 ml-3">Today</span>';
-                } else if (isTomorrow) {
-                    headerBgClass = 'bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500';
-                    headerTextClass = 'text-green-700';
-                    statusBadge = '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 ml-3">Tomorrow</span>';
-                } else if (isPast) {
-                    headerBgClass = 'bg-gradient-to-r from-gray-50 to-slate-50 border-l-4 border-gray-300';
-                    headerTextClass = 'text-gray-600';
-                }
-                
-                dateHeader.className = `px-6 py-4 ${headerBgClass}`;
-                dateHeader.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center">
-                            <h2 class="text-lg font-semibold ${headerTextClass}">${dayOfWeek}</h2>
-                            ${statusBadge}
-                        </div>
-                        <div class="text-right">
-                            <div class="text-sm text-gray-500 uppercase tracking-wide font-medium">${monthName}</div>
-                            <div class="text-2xl font-bold ${headerTextClass}">${dayOfMonth}</div>
-                        </div>
-                    </div>
-                `;
-                
-                dateSection.appendChild(dateHeader);
-                
-                // Sort tasks by completion status and time
-                tasks.sort((a, b) => {
-                    // Sort completed tasks to the bottom
-                    if (a.completed && !b.completed) return 1;
-                    if (!a.completed && b.completed) return -1;
-                    
-                    // Sort by time if available
-                    if (a.due_time && b.due_time) {
-                        return a.due_time.localeCompare(b.due_time);
-                    }
-                    
-                    // Tasks without time go to the top for non-completed tasks
-                    if (!a.due_time && b.due_time && !a.completed) return -1;
-                    if (a.due_time && !b.due_time && !b.completed) return 1;
-                    
-                    // Default to title sort
-                    return a.title.localeCompare(b.title);
-                });
-                
-                // Create tasks container with enhanced styling
-                const tasksContainer = document.createElement('div');
-                tasksContainer.className = 'divide-y divide-gray-50';
-                
-                tasks.forEach((task, taskIndex) => {
-                    // Enhanced task item styling
-                    const taskItem = document.createElement('div');
-                    let taskBgClass = 'hover:bg-gray-50';
-                    let taskTextClass = 'text-gray-800';
-                    let iconColor = 'text-blue-500';
-                    let statusClasses = '';
-                    
-                    if (task.completed) {
-                        taskBgClass = 'hover:bg-gray-25';
-                        taskTextClass = 'text-gray-500';
-                        iconColor = 'text-green-500';
-                        statusClasses = 'line-through opacity-75';
-                    }
-                    
-                    taskItem.className = `px-6 py-4 ${taskBgClass} cursor-pointer transition-all duration-200 group`;
-                    
-                    // Format time display with enhanced styling
-                    let timeDisplay = '';
-                    if (task.due_time) {
-                        const formattedTime = formatTime(task.due_time);
-                        timeDisplay = `
-                            <div class="flex items-center text-sm text-gray-500 mt-1">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                ${formattedTime}
-                            </div>
-                        `;
-                    }
-                    
-                    // Enhanced icons
-                    const iconSvg = task.completed 
-                        ? `<div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-                             <svg class="w-4 h-4 text-green-600" viewBox="0 0 20 20" fill="currentColor">
-                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                             </svg>
-                           </div>`
-                        : `<div class="w-6 h-6 rounded-full border-2 border-blue-300 bg-blue-50 flex items-center justify-center group-hover:border-blue-400 transition-colors">
-                             <div class="w-2 h-2 rounded-full bg-blue-400 group-hover:bg-blue-500 transition-colors"></div>
-                           </div>`;
-                    
-                    // Priority indicator (optional enhancement)
-                    let priorityIndicator = '';
-                    if (task.priority) {
-                        const priorityColors = {
-                            'high': 'bg-red-100 text-red-800',
-                            'medium': 'bg-yellow-100 text-yellow-800',
-                            'low': 'bg-green-100 text-green-800'
-                        };
-                        priorityIndicator = `<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${priorityColors[task.priority] || 'bg-gray-100 text-gray-800'}">${task.priority}</span>`;
-                    }
-                    
-                    taskItem.innerHTML = `
-                        <div class="flex items-start space-x-4">
-                            <div class="flex-shrink-0 mt-0.5">
-                                ${iconSvg}
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-start justify-between">
-                                    <div class="flex-1">
-                                        <h3 class="${taskTextClass} font-medium ${statusClasses} group-hover:text-gray-900 transition-colors">${task.title}</h3>
-                                        ${task.description ? `<p class="text-sm text-gray-500 mt-1 ${statusClasses}">${task.description}</p>` : ''}
-                                        ${timeDisplay}
-                                    </div>
-                                    <div class="flex items-center space-x-2 ml-4">
-                                        ${priorityIndicator}
-                                        <svg class="w-5 h-5 text-gray-400 group-hover:text-gray-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    
-                    // Add click event to show task details
-                    taskItem.addEventListener('click', function() {
-                        showTaskDetail({
-                            target: {
-                                getAttribute: (attr) => {
-                                    const attrs = {
-                                        'data-task-id': task.id,
-                                        'data-task-title': task.title,
-                                        'data-task-description': task.description || '',
-                                        'data-task-completed': task.completed,
-                                        'data-task-time': task.due_time || '',
-                                        'data-task-date': dateString
-                                    };
-                                    return attrs[attr];
-                                }
-                            }
-                        });
-                    });
-                    
-                    tasksContainer.appendChild(taskItem);
-                });
-                
-                dateSection.appendChild(tasksContainer);
-                agendaContent.appendChild(dateSection);
-            });
-        }// Initialize sidebar
-        initializeCalendarSidebar();
-        
-        // We're using the static sidebar structure from the reference image
-        // No need for dropdown toggles in the new design
-        
-        // Function to render the week view
-        function renderWeekView(dateInWeek = new Date()) {
-            // Store the current week start date for navigation
-            currentWeekStart = dateInWeek;
-            
-            // Clean up any existing no-events containers first
-            const existingNoEventsContainers = document.querySelectorAll('#no-events-container');
-            existingNoEventsContainers.forEach(container => container.remove());
-              // Ensure time grid is visible by default (will be hidden later if no events)
-            const weekTimeGridElement = document.getElementById('week-time-grid');
-            if (weekTimeGridElement) {
-                weekTimeGridElement.style.display = 'flex';
-            }
-            
-            // Calculate the start date of the week (Monday)
-            const startDate = new Date(dateInWeek);
-            const day = startDate.getDay(); // 0 is Sunday, 1 is Monday, etc.
-            
-            // Adjust to get Monday as the first day
-            const diff = day === 0 ? 6 : day - 1; // If Sunday (0), we go back 6 days to get to Monday
-            startDate.setDate(startDate.getDate() - diff);
-            
-            // Update header with week range
-            const endDate = new Date(startDate);
-            endDate.setDate(endDate.getDate() + 6); // End date is Sunday
-            
-            calendarHeader.textContent = `${monthNames[startDate.getMonth()]} ${startDate.getFullYear()}`;
-              // Update the day numbers in the week view header
-            for (let i = 0; i < 7; i++) {
-                const currentDate = new Date(startDate);
-                currentDate.setDate(startDate.getDate() + i);
-                
-                // Map i to the correct day element index: 0=Sunday, 1=Monday, etc.
-                const dayIndex = (i + 1) % 7; // This gives us: 1→1, 2→2, 3→3, 4→4, 5→5, 6→6, 0→0
-                const dayElement = document.getElementById(`week-day-${dayIndex}`);
-                
-                if (dayElement) {
-                    dayElement.textContent = currentDate.getDate();
-                }
-            }
-              // Clear existing events
-            const weekEventsContainerElement = document.getElementById('week-events-container');
-            // Keep the grid lines
-            const gridLines = weekEventsContainerElement.querySelectorAll('.border-t, .border-r');
-            weekEventsContainerElement.innerHTML = '';
-            // Re-add the grid lines
-            gridLines.forEach(line => weekEventsContainerElement.appendChild(line));
-              // Get the tasks for the current week from the calendarTasks object
-            const weekEvents = [];
-            
-            // Loop through each day of the week
-            for (let i = 0; i < 7; i++) {
-                const currentDate = new Date(startDate);
-                currentDate.setDate(startDate.getDate() + i);
-                
-                // Format the date to match the format in calendarTasks (YYYY-MM-DD)
-                const dateString = currentDate.toISOString().split('T')[0];
-                
-                // If we have tasks for this date, add them to weekEvents
-                if (calendarTasks[dateString]) {
-                    calendarTasks[dateString].forEach(task => {
-                        // Only add tasks with a due time
-                        if (task.due_time) {
-                            // Calculate day of week (0-6, where 0 is Sunday)
-                            const dayOfWeek = currentDate.getDay();
-                            
-                            // Estimate end time (add 1 hour if not specified)
-                            const startTime = task.due_time;
-                            let endTime = startTime;
-                            
-                            // Simple logic to create an end time (add 1 hour)
-                            if (startTime) {
-                                const [hours, minutes] = startTime.split(':').map(Number);
-                                let endHour = hours + 1;
-                                if (endHour > 23) endHour = 23;
-                                endTime = `${String(endHour).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-                            }
-                            
-                            // Determine color based on category or completion status
-                            let color = task.completed ? 'gray' : 'blue';
-                            
-                            // If the task has a category that matches our sidebar categories, use that color
-                            if (task.category) {
-                                const matchingCategory = calendarCategories.find(cat => 
-                                    cat.name.includes(task.category) || 
-                                    (task.category.includes && task.category.includes(cat.name))
-                                );
-                                
-                                if (matchingCategory) {
-                                    color = matchingCategory.color;
-                                }
-                            }
-                            
-                            weekEvents.push({
-                                id: task.id,
-                                title: task.title,
-                                description: task.description,
-                                day: dayOfWeek,
-                                start: startTime,
-                                end: endTime,
-                                color: color,
-                                completed: task.completed
-                            });
-                        }
-                    });
-                }
-            }              // Handle no events case - hide time slots and show centered message
-            const weekTimeGridElement2 = document.getElementById('week-time-grid');
-            if (weekEvents.length === 0) {
-                // Hide the time grid
-                weekTimeGridElement2.style.display = 'none';
-                  // Create a centered no events message container
-                const noEventsContainer = document.createElement('div');
-                noEventsContainer.id = 'no-events-container';
-                noEventsContainer.className = 'flex items-center justify-center h-[600px] bg-white';
-                noEventsContainer.innerHTML = `
-                    <div class="text-center">
-                        <div class="text-6xl mb-4">📅</div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">No Events Scheduled</h3>
-                        <p class="text-gray-600 mb-4">No events scheduled for this week</p>
-                        <button id="add-first-event-btn" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 shadow-md hover:shadow-lg">
-                            Add Event
-                        </button>
-                    </div>
-                `;
-                  // Insert the no events container after the week header
-                const weekViewContainer = document.getElementById('week-view-container');
-                const weekHeader = weekViewContainer.querySelector('.flex.bg-gradient-to-r');
-                weekHeader.parentNode.insertBefore(noEventsContainer, weekTimeGridElement2);
-                
-                // Add event listener to the Add Event button
-                setTimeout(() => {
-                    const addFirstEventBtn = document.getElementById('add-first-event-btn');
-                    if (addFirstEventBtn) {
-                        addFirstEventBtn.addEventListener('click', function() {
-                            const addEventModal = document.getElementById('add-event-modal');
-                            if (addEventModal) addEventModal.classList.remove('hidden');
-                        });
-                    }
-                }, 0);            } else {
-                // Show the time grid if there are events
-                weekTimeGridElement2.style.display = 'flex';
-                
-                // Remove no events container if it exists
-                const existingNoEventsContainer = document.getElementById('no-events-container');
-                if (existingNoEventsContainer) {
-                    existingNoEventsContainer.remove();
-                }
-            }
-              // Add events to the week view
-            weekEvents.forEach(event => {
-                const eventElement = document.createElement('div');
-                
-                // Calculate position and height
-                const startHour = parseInt(event.start.split(':')[0], 10);
-                const startMinute = parseInt(event.start.split(':')[1], 10);
-                const endHour = parseInt(event.end.split(':')[0], 10);
-                const endMinute = parseInt(event.end.split(':')[1], 10);                // Skip events that start after 23:59 (outside our grid)
-                if (startHour > 23) return;                // Position calculation: Each hour is 60px
-                // Position events starting from 1:00 (hour position - we start at 01:00)
-                let startPosition = (startHour - 1) * 60 + (startMinute / 60) * 60;
-                let endPosition = (endHour - 1) * 60 + (endMinute / 60) * 60;
-                
-                const height = Math.max(30, endPosition - startPosition); // Min height of 30px
-                
-                // Column calculation
-                let dayColumn = event.day;
-                
-                // Position the event
-                const colorMap = {
-                    'blue': 'bg-blue-100 border-blue-300 text-blue-800',
-                    'green': 'bg-green-100 border-green-300 text-green-800',
-                    'purple': 'bg-purple-100 border-purple-300 text-purple-800',
-                    'pink': 'bg-pink-100 border-pink-300 text-pink-800',
-                    'teal': 'bg-teal-100 border-teal-300 text-teal-800',
-                    'yellow': 'bg-yellow-100 border-yellow-300 text-yellow-800',
-                    'gray': 'bg-gray-100 border-gray-300 text-gray-800'
-                };
-                
-                const colorClass = colorMap[event.color] || 'bg-gray-100 border-gray-300 text-gray-800';
-                const completedClass = event.completed ? ' opacity-60 line-through' : '';
-                
-                eventElement.className = `absolute rounded-sm border p-2 z-10 ${colorClass}${completedClass}`;
-                eventElement.style.top = `${startPosition}px`;
-                eventElement.style.height = `${height}px`;
-                eventElement.style.left = `${dayColumn * 14.28}%`;
-                eventElement.style.width = '14.28%';
-                eventElement.style.overflow = 'hidden';
-                
-                // Add event content
-                eventElement.innerHTML = `
-                    <div class="text-xs font-medium">${event.title}</div>
-                    <div class="text-xs mt-1">${formatTime(event.start)} - ${formatTime(event.end)}</div>
-                `;
-                
-                // Add task attributes for potential modal display
-                if (event.id) {
-                    eventElement.setAttribute('data-task-id', event.id);
-                    eventElement.setAttribute('data-task-title', event.title);
-                    eventElement.setAttribute('data-task-description', event.description || '');
-                    eventElement.setAttribute('data-task-completed', event.completed || false);
-                    eventElement.setAttribute('data-task-time', event.start);
-                      // Get the date for this event
-                    const eventDate = new Date(startDate);
-                    eventDate.setDate(startDate.getDate() + event.day);
-                    const dateString = eventDate.toISOString().split('T')[0];
-                    eventElement.setAttribute('data-task-date', dateString);
-                    
-                    // Add click event to show task details
-                    eventElement.addEventListener('click', showTaskDetail);
-                }
-                  weekEventsContainerElement.appendChild(eventElement);
-            });            
-            // Render the mini calendar to match the current week as well
-            renderMiniCalendar(startDate.getMonth() + 1, startDate.getFullYear());
-              // Scroll to the current time (if it's today)
-            scrollToCurrentTime();
-        }
-
-        // Function to scroll the week view to the current time
-        function scrollToCurrentTime() {
-            const now = new Date();
-            const currentHour = now.getHours();
-            
-            // Calculate scroll position (60px per hour, starting from 1:00)
-            const scrollPosition = (currentHour - 1) * 60 - 60; // Scroll a bit above the current hour
-            
-            const weekTimeGridElement3 = document.getElementById('week-time-grid');
-            if (weekTimeGridElement3 && weekTimeGridElement3.style.display !== 'none') {
-                // Use smooth scrolling only if the time grid is visible
-                weekTimeGridElement3.scrollTo({
-                    top: Math.max(0, scrollPosition),
-                    behavior: 'smooth'
-                });            }
-        }
-
-        // Event listeners for navigation buttons
+        // Navigate to previous month
         prevMonthBtn.addEventListener('click', function() {
-            if (currentView === 'month') {
-                currentMonth--;
-                if (currentMonth < 1) {
-                    currentMonth = 12;
-                    currentYear--;
-                }
-                renderCalendar(currentMonth, currentYear);            } else if (currentView === 'week') {
-                // Navigate to previous week
-                if (currentWeekStart) {
-                    const newDate = new Date(currentWeekStart);
-                    newDate.setDate(newDate.getDate() - 7);
-                    renderWeekView(newDate);
-                } else {
-                    renderWeekView(new Date());
-                }
-            }
-        });
-
-        nextMonthBtn.addEventListener('click', function() {
-            if (currentView === 'month') {
-                currentMonth++;
-                if (currentMonth > 12) {
-                    currentMonth = 1;
-                    currentYear++;
-                }
-                renderCalendar(currentMonth, currentYear);            } else if (currentView === 'week') {
-                // Navigate to next week
-                if (currentWeekStart) {
-                    const newDate = new Date(currentWeekStart);
-                    newDate.setDate(newDate.getDate() + 7);
-                    renderWeekView(newDate);
-                } else {
-                    renderWeekView(new Date());
-                }
-            }
-        });
-
-        todayBtn.addEventListener('click', function() {
-            const now = new Date();
-            currentMonth = now.getMonth() + 1;
-            currentYear = now.getFullYear();
-            
-            if (currentView === 'month') {
-                renderCalendar(currentMonth, currentYear);            } else if (currentView === 'week') {
-                renderWeekView(new Date());
-            }
-        });
-
-        // Mini calendar navigation
-        document.getElementById('mini-prev-month').addEventListener('click', function() {
             currentMonth--;
             if (currentMonth < 1) {
                 currentMonth = 12;
                 currentYear--;
             }
-            renderMiniCalendar(currentMonth, currentYear);
-            if (currentView === 'month') {
-                renderCalendar(currentMonth, currentYear);
-            }
+            renderCalendar(currentMonth, currentYear);
         });
-
-        document.getElementById('mini-next-month').addEventListener('click', function() {
+        
+        // Navigate to next month
+        nextMonthBtn.addEventListener('click', function() {
             currentMonth++;
             if (currentMonth > 12) {
                 currentMonth = 1;
                 currentYear++;
             }
-            renderMiniCalendar(currentMonth, currentYear);
-            if (currentView === 'month') {
-                renderCalendar(currentMonth, currentYear);
-            }
-        });        // Add Event Modal functionality
-        const addEventBtn = document.getElementById('add-event-btn');
-        const addEventModal = document.getElementById('add-event-modal');
-        const cancelAddEventBtn = document.getElementById('cancel-add-event');
-        const saveEventBtn = document.getElementById('save-event');
+            renderCalendar(currentMonth, currentYear);
+        });
         
-        addEventBtn.addEventListener('click', function() {
-            // Navigate to tasks page
-            window.location.href = "{% url 'theme:tasks' %}";
+        // Go to today
+        todayBtn.addEventListener('click', function() {
+            const now = new Date();
+            currentMonth = now.getMonth() + 1;
+            currentYear = now.getFullYear();
+            renderCalendar(currentMonth, currentYear);
         });
-
-        cancelAddEventBtn.addEventListener('click', function() {
-            addEventModal.classList.add('hidden');
-        });
-
-        saveEventBtn.addEventListener('click', function() {
-            // Get form values
-            const title = document.getElementById('event-title').value;
-            const date = document.getElementById('event-date').value;
-            const time = document.getElementById('event-time').value;
-            
-            if (title && date && time) {
-                // Here you would normally save to backend
-                console.log('Saving event:', { title, date, time });
-                addEventModal.classList.add('hidden');
-                
-                // Clear form
-                document.getElementById('event-title').value = '';
-                document.getElementById('event-date').value = '';
-                document.getElementById('event-time').value = '';
-            } else {
-                alert('Please fill in all required fields');
-            }
-        });        // Task detail modal functionality
-        closeTaskDetailBtn.addEventListener('click', function() {
-            taskDetailModal.classList.add('hidden');
-        });
-
-        // Initialize with week view
-        updateViewButtonStyles('week');
         
         // Initial render
-        renderWeekView(new Date());
-        
-        // Also render mini calendar
-        renderMiniCalendar(currentMonth, currentYear);
+        renderCalendar(currentMonth, currentYear);
     });
 </script>
-<script src="{% static 'js/task-menu.js' %}"></script>
 {% endblock %}

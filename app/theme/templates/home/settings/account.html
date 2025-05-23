@@ -57,12 +57,18 @@
             </svg>
             <span>Change successful</span>
         </div>
-    </div>    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+    </div>    
+    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
         <div class="flex items-center gap-4 mb-6">
             <img src="{{ user.profile.avatar }}" alt="Profile Picture" class="w-20 h-20 rounded-full">
             <div>
                 <h2 class="text-lg font-medium">{{ user.first_name }} {{ user.last_name }}</h2>
             </div>
+            {% if messages %}
+            <div class="bg-red-100 border border-orange-300 text-orange-700 px-4 py-3 rounded relative mb-4">
+                <p>{{ message }}</p>
+            </div>
+            {% endif %} 
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -76,7 +82,8 @@
                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
                               data-original-value="{{ user.first_name }}">
                         <span class="change-indicator">First Name changed</span>
-                    </div>                    <div class="space-y-2">
+                    </div>                    
+                    <div class="space-y-2">
                         <label class="block text-sm text-gray-700">Last Name</label>
                         <input type="text" name="last_name" id="last_name" value="{{ user.last_name }}" 
                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
@@ -90,7 +97,8 @@
 
             <div>
                 <h3 class="font-medium text-gray-800 mb-4">Account Security</h3>
-                <div class="space-y-4">                <div>
+                <div class="space-y-4">                
+                    <div>
                         <h4 class="font-medium text-gray-700">Login Details</h4>
                         <p class="text-sm text-gray-500 mb-2">Change your email and password</p>
                         <a href="{% url 'theme:login_details' %}" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors inline-block">Change Login Details</a>

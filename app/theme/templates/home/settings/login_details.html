@@ -15,11 +15,9 @@
     <!-- Success/Error Messages -->
     {% if messages %}
     <div class="mb-6">
-        {% for message in messages %}
-            <div class="p-4 mb-4 rounded-md {{ message.tags|yesno:'bg-green-100 text-green-800,bg-red-100 text-red-800' }}">
-                {{ message }}
-            </div>
-        {% endfor %}
+        <div class="p-4 mb-4 rounded-md {{ message.tags|yesno:'bg-green-100 text-green-800,bg-red-100 text-red-800' }}">
+            {{ message }}
+        </div>
     </div>
     {% endif %}
     

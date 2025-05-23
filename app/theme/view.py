@@ -365,7 +365,8 @@ def calendar(request):
     tasks = Tasks.objects.filter(user=request.user)
     
     # Get the current month and year
-    today = timezone.now().date()
+    local_time = timezone.localtime(timezone.now())
+    today = local_time.date()
     current_month = today.month
     current_year = today.year
     
@@ -472,8 +473,8 @@ def privacy_policy(request):
 # TASKS
 @login_required(login_url='/login/')
 def all_tasks(request):
-    import json  # Add import here to ensure it's available
-    today = timezone.now().date()
+    local_time = timezone.localtime(timezone.now())
+    today = local_time.date()
     one_week = today + timedelta(days=7)
     
     # Get user tasks
@@ -481,16 +482,12 @@ def all_tasks(request):
     
     # Process form submission
     if request.method == 'POST':
-        print(f"Task form submitted with POST data: {request.POST}")
         form = TaskForm(request.POST)
         if form.is_valid():
-            print("Form is valid, processing task creation/update")
-            print(f"Form cleaned data: {form.cleaned_data}")
-            
             # Create or update task
             task_id = request.POST.get('task_id', '')
             
-            if task_id:  # Updating existing task
+            if task_id:
                 try:
                     task = Tasks.objects.get(id=task_id, user=request.user)
                     task.title = form.cleaned_data['title']
@@ -514,8 +511,7 @@ def all_tasks(request):
                     messages.success(request, 'Task updated successfully!')
                 except Tasks.DoesNotExist:
                     messages.error(request, 'Task not found.')
-            else:  # Creating new task
-                print("Creating new task")
+            else:
                 task = Tasks.objects.create(
                     user=request.user,
                     title=form.cleaned_data['title'],
@@ -524,7 +520,6 @@ def all_tasks(request):
                     due_date=form.cleaned_data.get('due_date'),
                     due_time=form.cleaned_data.get('due_time')
                 )
-                print(f"New task created: {task.id}")
                 
                 # Add labels
                 selected_labels = request.POST.getlist('labels')
@@ -541,15 +536,14 @@ def all_tasks(request):
                 
             return redirect('theme:tasks')
         else:
-            print(f"Form is invalid. Errors: {form.errors}")
             messages.error(request, 'Please correct the errors in the form.')
     else:
         form = TaskForm()
     
     # Group tasks by date categories
+    overdue_tasks = tasks.filter(due_date__lt=today, completed=False)
     today_tasks = tasks.filter(due_date=today, completed=False)
-    upcoming_week_tasks = tasks.filter(due_date__gt=today, due_date__lte=one_week, completed=False)
-    future_tasks = tasks.filter(Q(due_date__gt=one_week) | Q(due_date=None), completed=False)
+    upcoming_no_date_tasks = tasks.filter(Q(due_date__gt=today) | Q(due_date=None), completed=False)
     completed_tasks = tasks.filter(completed=True)
     
     # Get all labels for the user
@@ -557,9 +551,9 @@ def all_tasks(request):
     
     context = {
         'form': form,
+        'overdue_tasks': overdue_tasks,
         'today_tasks': today_tasks,
-        'upcoming_week_tasks': upcoming_week_tasks,
-        'future_tasks': future_tasks,
+        'upcoming_no_date_tasks': upcoming_no_date_tasks,
         'completed_tasks': completed_tasks,
         'user_labels': user_labels,
         'today': today,
