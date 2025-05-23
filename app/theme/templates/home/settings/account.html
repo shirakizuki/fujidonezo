@@ -1,0 +1,206 @@
+{% extends '../home.html' %}
+{% load static %}
+{% load tailwind_tags %}
+{% block main %}
+<div class="w-full p-3 md:px-4 md:py-5 lg:px-6 lg:py-6 overflow-y-auto">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold">Account Settings</h1>
+        <p class="text-gray-600">Manage your account details and preferences</p>
+    </div>
+      <style>
+        .field-changed {
+            border-color: #93c5fd !important; /* light blue border */
+        }
+        
+        .change-indicator {
+            display: none;
+            font-size: 0.75rem;
+            color: #3b82f6;
+            margin-top: 0.25rem;
+        }
+        
+        .field-changed + .change-indicator {
+            display: block;
+        }
+        
+        /* Success popup styles */
+        .success-popup {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #10b981; /* Green background */
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            animation: slide-in 0.3s ease-out, fade-out 0.5s ease-in 2.5s forwards;
+        }
+        
+        @keyframes slide-in {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes fade-out {
+            from { opacity: 1; }
+            to { opacity: 0; visibility: hidden; }
+        }
+    </style>
+    
+    <!-- Success popup notification -->
+    <div id="success-popup" class="success-popup">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Change successful</span>
+        </div>
+    </div>    <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+        <div class="flex items-center gap-4 mb-6">
+            <img src="{{ user.profile.avatar }}" alt="Profile Picture" class="w-20 h-20 rounded-full">
+            <div>
+                <h2 class="text-lg font-medium">{{ user.first_name }} {{ user.last_name }}</h2>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h3 class="font-medium text-gray-800 mb-4">Personal Information</h3>                
+                <form method="post" class="space-y-4" id="account-form">
+                    {% csrf_token %}
+                    <div class="space-y-2">
+                        <label class="block text-sm text-gray-700">First Name</label>
+                        <input type="text" name="first_name" id="first_name" value="{{ user.first_name }}" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
+                              data-original-value="{{ user.first_name }}">
+                        <span class="change-indicator">First Name changed</span>
+                    </div>                    <div class="space-y-2">
+                        <label class="block text-sm text-gray-700">Last Name</label>
+                        <input type="text" name="last_name" id="last_name" value="{{ user.last_name }}" 
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-400"
+                              data-original-value="{{ user.last_name }}">
+                        <span class="change-indicator">Last Name changed</span>
+                    </div>
+                    <input type="hidden" name="has_changes" id="has_changes" value="false">
+                    <button type="submit" class="px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500 transition-colors">Save Changes</button>
+                </form>
+            </div>
+
+            <div>
+                <h3 class="font-medium text-gray-800 mb-4">Account Security</h3>
+                <div class="space-y-4">                <div>
+                        <h4 class="font-medium text-gray-700">Login Details</h4>
+                        <p class="text-sm text-gray-500 mb-2">Change your email and password</p>
+                        <a href="{% url 'theme:login_details' %}" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors inline-block">Change Login Details</a>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-medium text-gray-700">Email Verification</h4>
+                        <p class="text-sm text-gray-500 mb-2">
+                            {% if user.profile.is_verified %}
+                            <span class="text-green-700 font-semibold">Your email is verified</span>
+                            {% else %}
+                            Please verify your email address
+                            {% endif %}
+                        </p>
+                        {% if not user.profile.is_verified %}
+                        <a href="{% url 'theme:resend_verification' %}" class="px-4 py-2 bg-orange-400 text-white rounded-md hover:bg-orange-500 transition-colors inline-block">Verify Email</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>        
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get the form, input fields, and hidden field
+        const form = document.getElementById('account-form');
+        const inputFields = form.querySelectorAll('input[type="text"]');
+        const hasChangesField = document.getElementById('has_changes');
+        const successPopup = document.getElementById('success-popup');
+        
+        // Check if there's a success message in the URL query string
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('success') === 'true') {
+            // Show success popup
+            showSuccessPopup();
+            
+            // Remove the query parameter to prevent showing the message on refresh
+            if (history.replaceState) {
+                let newUrl = window.location.href.split('?')[0];
+                history.replaceState(null, '', newUrl);
+            }
+        }
+        
+        // Function to check if any field has changes
+        function checkFormChanges() {
+            let hasChanges = false;
+            inputFields.forEach(input => {
+                const originalValue = input.getAttribute('data-original-value');
+                if (input.value.trim() !== originalValue.trim()) {
+                    hasChanges = true;
+                }
+            });
+            
+            // Update the hidden field to track changes
+            hasChangesField.value = hasChanges ? 'true' : 'false';
+            return hasChanges;
+        }
+        
+        // Function to show success popup
+        function showSuccessPopup() {
+            successPopup.style.display = 'block';
+            // Auto-hide popup after 3 seconds
+            setTimeout(() => {
+                successPopup.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Add event listeners to each input field to detect changes
+        inputFields.forEach(input => {
+            const originalValue = input.getAttribute('data-original-value');
+            
+            // Track input changes
+            input.addEventListener('input', function() {
+                if (this.value !== originalValue) {
+                    // Value has changed from original
+                    this.classList.add('field-changed');
+                } else {
+                    // Value is back to original
+                    this.classList.remove('field-changed');
+                }
+                
+                // Update form status
+                checkFormChanges();
+            });
+            
+            // Also check on blur for better UX
+            input.addEventListener('blur', function() {
+                if (this.value.trim() === originalValue.trim()) {
+                    this.classList.remove('field-changed');
+                } else {
+                    this.classList.add('field-changed');
+                }
+                
+                // Update form status
+                checkFormChanges();
+            });        });
+        
+        // Handle form submission
+        form.addEventListener('submit', function(event) {
+            // Only prevent default if no changes were made
+            if (hasChangesField.value === 'false') {
+                event.preventDefault();
+                alert('No changes were made to the form.');
+                return false;
+            }
+            // Form will submit normally if changes were made
+            return true;
+        });
+    });
+</script>
+{% endblock %}

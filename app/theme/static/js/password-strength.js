@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const passwordInput = document.getElementById('id_password');
-    const confirmPasswordInput = document.getElementById('id_confirm_password');
-    const strengthMeter = document.getElementById('password-strength-meter');
-    const strengthText = document.getElementById('password-strength-text');
-    const matchStatus = document.getElementById('password-match-status');
+    // Support both registration form and change password form
+    const passwordInput = document.getElementById('id_password') || document.getElementById('new_password');
+    const confirmPasswordInput = document.getElementById('id_confirm_password') || document.getElementById('confirm_password');
+    const strengthMeter = document.getElementById('password-strength-meter') || document.querySelector('.password-strength-bar');
+    const strengthText = document.getElementById('password-strength-text') || document.querySelector('.password-strength-text');
+    const matchStatus = document.getElementById('password-match-status') || document.querySelector('.password-match-text');
     
     // Get the criteria elements if they exist
     const criteriaItems = {

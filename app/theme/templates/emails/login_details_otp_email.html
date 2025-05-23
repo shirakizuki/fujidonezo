@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Verification Code - Donezo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .otp-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 5px;
+            border: 1px solid #e5e7eb;
+        }
+        .otp-code {
+            font-size: 32px;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: #f97316;
+        }
+        .footer {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+            margin-top: 30px;
+        }
+        .expiry {
+            font-size: 14px;
+            color: #666;
+            margin-top: 20px;
+        }
+        .warning {
+            color: #b91c1c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>Donezo</h1>
+        </div>
+        
+        <p>Hello {{ user.first_name }},</p>
+        
+        <p>You've requested to change your {{ action_type }} for your Donezo account. To verify this change, please use the verification code below:</p>
+        
+        <div class="otp-container">
+            <div class="otp-code">{{ otp }}</div>
+        </div>
+        
+        <p>This code is valid for 5 minutes. If you don't complete the verification within this time, you'll need to request a new code.</p>
+        
+        {% if action_type == 'email change' %}
+        <p>You are changing your email address from <strong>{{ user.email }}</strong> to <strong>{{ new_email }}</strong>.</p>
+        {% endif %}
+        
+        <p class="warning">If you didn't request this change, please ignore this email and consider changing your password immediately as your account might be compromised.</p>
+        
+        <p>Best regards,<br>The Donezo Team</p>
+        
+        <div class="expiry">
+            <p>This verification code will expire on {{ expiry_time }}.</p>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>&copy; {% now "Y" %} Donezo. All rights reserved.</p>
+    </div>
+</body>
+</html>

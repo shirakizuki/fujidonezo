@@ -15,7 +15,13 @@ urlpatterns = [
     path('password-reset/', view.password_reset_request, name='password_reset_request'),
     path('password-reset-sent/', view.password_reset_sent, name='password_reset_sent'),
     path('password-reset/<uuid:token>/', view.password_reset_confirm, name='password_reset_confirm'),
-    path('password-reset-complete/', view.password_reset_complete, name='password_reset_complete'),
+    path('password-reset-complete/', view.password_reset_complete, name='password_reset_complete'),    # LOGIN DETAILS MANAGEMENT URLS
+    path('app/login-details/', view.login_details, name='login_details'),
+    path('app/change-email/', view.change_email, name='change_email'),
+    path('app/verify-email-change/<uuid:token>/', view.verify_email_change, name='verify_email_change'),
+    path('app/change-password/', view.change_password, name='change_password'),
+    path('app/verify-login-otp/', view.verify_login_otp, name='verify_login_otp'),
+    path('app/resend-login-otp/', view.resend_login_otp, name='resend_login_otp'),
     # LEGAL PAGES
     path('terms-of-service/', view.terms_of_service, name='terms-of-service'),
     path('privacy-policy/', view.privacy_policy, name='privacy-policy'),      # BASE APPS
@@ -27,5 +33,6 @@ urlpatterns = [
     path('app/labels/delete/<int:label_id>/', view.delete_label, name='delete_label'),
     path('app/calendar', view.calendar, name='calendar'),
     path('app/help', view.help, name='help'),
+    path('app/account', view.account, name='account'),
 ]
 
